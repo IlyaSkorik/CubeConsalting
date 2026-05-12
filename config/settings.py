@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-4)(flm!4#5@yi7#^t&hud*iramxs!(+ke428p#^@=nhe+t)g7!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "test.cubelab.by",
+    "www.test.cubelab.by",
+    "127.0.0.1" # убрать на проде
+]
 
 
 # Application definition
