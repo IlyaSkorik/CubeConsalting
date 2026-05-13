@@ -1,40 +1,19 @@
 :root {
-
-    --bg: #0A0A0B;
-    --surface: #111214;
-    --card: rgba(255, 255, 255, 0.04);
-
-    --text: #F5F5F7;
-    --text-muted: #A1A1AA;
-
+    --logo: #1B2833;
+    --bg: #F8FAFC;
+    --text: #0F172A;
     --primary: #0055FF;
-    --primary-hover: #256DFF;
-
-    --border: rgba(255,255,255,0.08);
-
-    --shadow-glow:
-        0 0 20px rgba(0, 85, 255, 0.25);
-
-    --radius-main: 24px;
-
-    --backdrop-blur: blur(20px);
+    --secondary: #94A3B8;
+    --accent: #0066CC;
 }
 
 [data-theme="light"] {
-    --bg: #F5F5F7;
-    --surface: #FFFFFF;
-    --card: rgba(255, 255, 255, 0.7);
-
-    --text: #111111;
-    --text-muted: #52525B;
-
-    --primary: #0A2540;
-    --primary-hover: #163A63;
-
-    --border: rgba(0,0,0,0.08);
-
-    --shadow-glow:
-        0 0 20px rgba(10, 37, 64, 0.12);
+    --logo: #0055FF;
+    --bg: #0A0C0E;
+    --text: #F1F5F9;
+    --primary: #0055FF;
+    --secondary: #334155;
+    --accent: #00D1FF;
 }
 
 @font-face {
