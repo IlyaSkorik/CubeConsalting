@@ -1,1 +1,23 @@
+@import "tailwindcss";
 @import "./base.css";
+
+@source "../../templates/mobile";
+
+
+@theme {
+    --font-sans: "Inter", sans-serif; 
+    --font-heading: "Geist", sans-serif;
+    
+    --color-bg: var(--bg);
+    --color-surface: var(--surface);
+    --color-card: var(--card);
+
+    --color-text: var(--text);
+    --color-text-muted: var(--text-muted);
+
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+
+    --color-border: var(--border);
+}
+

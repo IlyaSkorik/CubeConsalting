@@ -3,18 +3,22 @@
 @layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
-    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-      "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: "Inter", sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-sky-500: oklch(68.5% 0.169 237.323);
+    --spacing: 0.25rem;
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
     --text-7xl: 4.5rem;
     --text-7xl--line-height: 1;
+    --radius-lg: 0.5rem;
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
+    --color-bg: var(--bg);
+    --color-text: var(--text);
+    --color-border: var(--border);
   }
 }
 @layer base {
@@ -169,22 +173,36 @@
   .static {
     position: static;
   }
-  .table {
-    display: table;
+  .flex {
+    display: flex;
   }
-  .border-collapse {
-    border-collapse: collapse;
+  .h-96 {
+    height: calc(var(--spacing) * 96);
   }
-  .resize {
-    resize: both;
+  .w-125 {
+    width: calc(var(--spacing) * 125);
   }
-  .border {
+  .items-center {
+    align-items: center;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .border-8 {
     border-style: var(--tw-border-style);
-    border-width: 1px;
+    border-width: 8px;
   }
-  .text-5xl {
-    font-size: var(--text-5xl);
-    line-height: var(--tw-leading, var(--text-5xl--line-height));
+  .border-border {
+    border-color: var(--color-border);
+  }
+  .bg-bg {
+    background-color: var(--color-bg);
+  }
+  .font-sans {
+    font-family: var(--font-sans);
   }
   .text-7xl {
     font-size: var(--text-7xl);
@@ -193,23 +211,98 @@
   .text-red-500 {
     color: var(--color-red-500);
   }
-  .text-sky-500 {
-    color: var(--color-sky-500);
+  .text-text {
+    color: var(--color-text);
   }
-  .underline {
-    text-decoration-line: underline;
-  }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
-  }
+}
+:root {
+  --bg: #0A0A0B;
+  --surface: #111214;
+  --card: rgba(255, 255, 255, 0.04);
+  --text: #F5F5F7;
+  --text-muted: #A1A1AA;
+  --primary: #0055FF;
+  --primary-hover: #256DFF;
+  --border: rgba(255,255,255,0.08);
+  --shadow-glow: 0 0 20px rgba(0, 85, 255, 0.25);
+  --radius-main: 24px;
+  --backdrop-blur: blur(20px);
+}
+[data-theme="light"] {
+  --bg: #F5F5F7;
+  --surface: #FFFFFF;
+  --card: rgba(255, 255, 255, 0.7);
+  --text: #111111;
+  --text-muted: #52525B;
+  --primary: #0A2540;
+  --primary-hover: #163A63;
+  --border: rgba(0,0,0,0.08);
+  --shadow-glow: 0 0 20px rgba(10, 37, 64, 0.12);
+}
+@font-face {
+  font-family: "Geist";
+  src: url("../../fonts/Geist/Geist-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("../../fonts/Geist/Geist-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("../../fonts/Geist/Geist-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("../../fonts/Geist/Geist-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter/Inter_28pt-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter/Inter_28pt-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter/Inter_28pt-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter/Inter_28pt-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../../fonts/Inter/Inter_28pt-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
 }
 @property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
-@property --tw-outline-style {
   syntax: "*";
   inherits: false;
   initial-value: solid;
@@ -218,7 +311,6 @@
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
       --tw-border-style: solid;
-      --tw-outline-style: solid;
     }
   }
 }
