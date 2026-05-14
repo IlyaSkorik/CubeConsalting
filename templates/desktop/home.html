@@ -1,7 +1,14 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Куб Консалтинг</title>
+    <link rel="stylesheet" href="{% static 'desktop/css/desktop.css' %}">
+</head>
+<body class="bg-bg">
+  {% include "desktop/include/navbar.html" %}
 
-<link rel="stylesheet" href="{% static 'desktop/css/desktop.css' %}">
-
-<div class="bg-bg text-text border-border border-8 w-125 h-96 rounded-lg flex items-center justify-center">
-    <h1 class="text-7xl text-text font-sans">CUBELAB DESKTOP</h1>
-</div>
+</body>
+</html>
