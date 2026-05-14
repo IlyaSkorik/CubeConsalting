@@ -16,3 +16,4 @@
     --color-accent: var(--accent);
 }
 
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

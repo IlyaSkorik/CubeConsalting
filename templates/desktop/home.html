@@ -1,14 +1,14 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Куб Консалтинг</title>
     <link rel="stylesheet" href="{% static 'desktop/css/desktop.css' %}">
 </head>
-<body class="bg-bg">
-  {% include "desktop/include/navbar.html" %}
-
+<body class="bg-bg font-sans">
+    {% include 'desktop/include/navbar.html'%}    
+    {% include 'desktop/include/hero.html'%}    
 </body>
 </html>
