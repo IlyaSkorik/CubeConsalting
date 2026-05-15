@@ -6,7 +6,7 @@
   >
     <!-- LEFT -->
     <div class="flex items-center gap-2 z-10">
-        <a href="#" class="relative text-text text-sm font-semibold filter drop-shadow-[0_0_8px_var(--primary)] hover:drop-shadow-[0_0_12px_var(--primary)] transition-all">
+        <a href="#" class="relative text-text text-sm font-semibold filter drop-shadow-[0_0_8px_var(--primary)] transition-all">
             Решения
         </a>
 
@@ -19,6 +19,7 @@
           viewBox="0 0 3440 1440"
           class="w-full h-auto text-primary"
         >
+        
           <g id="цветной">
             <!-- Основной массив куба -->
             <path
@@ -41,8 +42,6 @@
             />
 
             <g id="Слой_9">
-              <!-- Скрытый по умолчанию контур (был .st1 c display:none) -->
-              <!-- Если он вам нужен, удалите класс 'hidden' -->
               <path
                 class="hidden fill-none stroke-current stroke-20 stroke-linecap-round stroke-miterlimit-10"
                 d="M1165.52,1012.61c0.48-6.81,13.54-11.36,20.61-14.58c165.47-68.57,330.65-137.99,496.3-206.13
@@ -51,8 +50,6 @@
         c-7.94,3.41-15.89,5.53-23.84,5.47c-7.89,0.01-15.77-2.13-23.66-5.52c-166.61-82.17-332.62-165.69-499.01-248.32
         c-7.56-4.03-19.17-8.98-19.56-15.95L1165.52,1012.61z"
               />
-
-              <!-- Внутренняя вертикальная грань куба -->
               <path
                 class="fill-none stroke-current stroke-42 stroke-linecap-round stroke-miterlimit-10"
                 d="M1706.9,513.39c0,84.03,0,701.78,0,773.49"
@@ -64,13 +61,12 @@
 
       <a
         href="#"
-        class="text-[14px] font-medium text-text hover:text-logo transition"
+        class="text-[14px] font-medium text-text hover:text-primary transition"
       >
         Кейс
       </a>
     </div>
 
-    <!-- CENTER LOGO -->
     <div
       class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center"
     >
@@ -89,12 +85,12 @@
     <div class="ml-auto flex items-center gap-2 z-10">
       <a
         href="#"
-        class="text-[14px] font-medium text-text hover:text-logo transition"
+        class="text-[14px] font-medium text-text hover:text-primary transition"
       >
         Лаборатория
       </a>
 
-      <div
+        <div
         class="w-10 h-10 flex items-center justify-center opacity-70 hover:opacity-100 transition duration-300"
       >
         <svg
@@ -103,7 +99,6 @@
           class="w-full h-auto text-primary"
         >
           <g id="цветной">
-            <!-- Основной массив куба -->
             <path
               class="fill-primary stroke-current stroke-42 stroke-miterlimit-10"
               d="M1708.25,125.21c-113.79,31.82-421.23,143.63-533.33,183.48c-9.63,4.76-12.59,16.89-13.25,27.16
@@ -124,8 +119,6 @@
             />
 
             <g id="Слой_9">
-              <!-- Скрытый по умолчанию контур (был .st1 c display:none) -->
-              <!-- Если он вам нужен, удалите класс 'hidden' -->
               <path
                 class="hidden fill-none stroke-current stroke-20 stroke-linecap-round stroke-miterlimit-10"
                 d="M1165.52,1012.61c0.48-6.81,13.54-11.36,20.61-14.58c165.47-68.57,330.65-137.99,496.3-206.13
@@ -134,8 +127,6 @@
         c-7.94,3.41-15.89,5.53-23.84,5.47c-7.89,0.01-15.77-2.13-23.66-5.52c-166.61-82.17-332.62-165.69-499.01-248.32
         c-7.56-4.03-19.17-8.98-19.56-15.95L1165.52,1012.61z"
               />
-
-              <!-- Внутренняя вертикальная грань куба -->
               <path
                 class="fill-none stroke-current stroke-42 stroke-linecap-round stroke-miterlimit-10"
                 d="M1706.9,513.39c0,84.03,0,701.78,0,773.49"
@@ -147,7 +138,7 @@
 
       <a
         href="#"
-        class="text-[14px] font-medium text-text hover:text-logo transition"
+        class="text-[14px] font-medium text-text hover:text-primary transition"
       >
         Демо
       </a>
@@ -174,10 +165,17 @@
 
       <!-- CTA -->
       <button
-        class="h-9 px-4 rounded-lg bg-primary text-bg text-sm font-bold hover:scale-[1.03] transition-all duration-300 shadow-[0_10px_25px_rgba(0,0,0,0.08)] cursor-pointer"
-      >
-        Запустить прорыв
-      </button>
+  class="h-9 px-4 rounded-lg
+  bg-primary/70
+  dark:text-text/80 text-sm font-semibold
+  transition-all duration-300
+  hover:shadow-[0_0_12px_var(--primary)]
+  hover:bg-primary/80
+  active:scale-[0.98]
+  cursor-pointer"
+>
+  Запустить прорыв
+</button>     
     </div>
   </div>
 </header>
