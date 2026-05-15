@@ -1,32 +1,24 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CUB LAB Mobile</title>
     <link rel="stylesheet" href="{% static 'mobile/css/mobile.css' %}">
-
     <script>
         if (localStorage.getItem('theme') === 'light') {
             document.documentElement.setAttribute('data-theme', 'light');
         }
     </script>
-
-    <style>
-        *, *::before, *::after {
-            transition: background-color 0.4s ease-in-out, 
-                        color 0.4s ease-in-out, 
-                        border-color 0.4s ease-in-out, 
-                        fill 0.4s ease-in-out,
-                        stroke 0.4s ease-in-out !important;
-        }
-    </style>
 </head>
-<body class="bg-bg text-text font-sans antialiased min-h-screen">
+<body class="bg-bg text-text font-sans antialiased min-h-screen transition-colors duration-500">
+
     {% include "mobile/includes/navbar.html" %}
-    <main class="p-5">
-        <!-- Твой контент -->
-    </main>
+
+    <main>
+        </main>
+
+
 </body>
 </html>
