@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev:desktop": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --watch",
-    
     "dev:mobile": "tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --watch",
-
     "build": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --minify && tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --minify"
   },
   "repository": {
@@ -23,6 +21,7 @@
   "homepage": "https://github.com/IlyaSkorik/CubeConsalting#readme",
   "dependencies": {
     "@tailwindcss/cli": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.0",
     "tailwindcss": "^4.3.0"
   }
 }
