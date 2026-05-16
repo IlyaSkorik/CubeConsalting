@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+import time
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -145,3 +146,15 @@ if not DEBUG:
         "yes",
         "on",
     }
+
+
+
+# Генерируем версию один раз при старте сервера (деплое)
+STATIC_VERSION = int(time.time())
+
+# Регистрируем функцию, которая прокинет эту версию в шаблоны
+def static_version_processor(request):
+    return {'APP_VERSION': STATIC_VERSION}
+
+# Добавляем наш процессор в существующий список Django
+TEMPLATES[0]["OPTIONS"]["context_processors"].append("config.settings.static_version_processor")
