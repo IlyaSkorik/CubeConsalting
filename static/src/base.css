@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-theme="light"] {
     --logo: #1B2833;
     --bg: #F8FAFC;
     --text: #0F172A;
@@ -7,7 +8,7 @@
     --accent: #0066CC;
 }
 
-[data-theme="light"] {
+[data-theme="dark"] {
     --logo: #0055FF;
     --bg: #0A0C0E;
     --text: #F1F5F9;
