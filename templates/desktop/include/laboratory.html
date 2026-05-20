@@ -1,0 +1,191 @@
+{% load static %}
+
+<section
+  id="lab"
+  class="relative h-screen overflow-hidden bg-bg px-20 py-10 flex items-center"
+>
+
+  <!-- glow -->
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-225 bg-primary/10 blur-[180px] rounded-full pointer-events-none"
+  ></div>
+
+  <!-- wrapper -->
+<div
+  class="relative z-10 max-w-425 mx-auto flex items-center gap-8 w-full"
+>
+
+  <!-- LEFT -->
+  <div class="w-[40%] shrink-0">
+
+    <!-- title -->
+    <h2
+      class="font-heading text-5xl font-bold  text-text mb-6"
+    >
+      Мы — практики.<br />
+      Создаём то, чем пользуемся сами
+    </h2>
+
+    <!-- text -->
+    <p
+      class="text-base leading-relaxed text-text/60 mb-8 max-w-130"
+    >
+      Мы растём внутри сложных систем.
+      Создаём инструменты, которыми пользуемся сами.
+      Без бюрократии, лишнего шума и красивых сказок.
+    </p>
+
+    <!-- points -->
+    <div class="space-y-4 mb-8">
+
+      <!-- item -->
+      <div class="flex items-center gap-4">
+        <div
+          class="w-9 h-9 shrink-0 rounded-xs bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xl"
+        >
+          ◈
+        </div>
+
+        <div>
+          <h3
+            class="text-text font-semibold text-lg mb-1"
+          >
+            Антихрупкость
+          </h3>
+
+          <p
+           class="text-text/70 leading-relaxed text-sm"
+          >
+            Мы не ломаемся от хаоса —
+            мы растём внутри него.
+          </p>
+        </div>
+      </div>
+
+      <!-- item -->
+      <div class="flex items-center gap-4">
+        <div
+         class="w-9 h-9 shrink-0 rounded-xs bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xl"
+        >
+          ◈
+        </div>
+
+        <div>
+          <h3
+            class="text-text font-semibold text-lg mb-1"
+          >
+            Команда
+          </h3>
+
+          <p
+            class="text-text/70 leading-relaxed text-sm"
+          >
+            10 граней. Разные специалисты.
+            Одна цель.
+          </p>
+        </div>
+      </div>
+
+      <!-- item -->
+      <div class="flex items-center gap-4">
+        <div
+         class="w-9 h-9 shrink-0 rounded-xs bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-xl"
+        >
+          ◈
+        </div>
+
+        <div>
+          <h3
+            class="text-text font-semibold text-lg mb-1"
+          >
+            Манифест
+          </h3>
+
+          <p
+            class="text-text/70 leading-relaxed text-sm"
+          >
+            Смыслы важнее денег.
+            Искренность важнее образа.
+            Правда важнее шума.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- button -->
+    <button
+      class="group px-7 py-2.5 rounded-md border border-text/10 bg-text/4 hover:bg-white/[0.07] backdrop-blur-xl transition text-text text-base  font-medium flex items-center gap-2"
+    >
+      Больше о нас
+
+      <span
+        class="transition group-hover:translate-x-1"
+      >
+        →
+      </span>
+    </button>
+
+  </div>
+
+  <!-- RIGHT -->
+<div class="w-[60%] flex flex-col gap-2 h-screen py-24">
+
+  <!-- TOP -->
+  <div class="flex gap-2 h-[60%]">
+
+    <!-- LEFT 70% -->
+    <div
+      class="w-[65%] rounded-lg overflow-hidden border border-white/10"
+    >
+      <img
+        src="{% static 'desktop/img/lab-1.png' %}"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition duration-700"
+      />
+    </div>
+
+    <!-- RIGHT 30% -->
+    <div
+      class="w-[35%] rounded-lg overflow-hidden border border-white/10"
+    >
+      <img
+        src="{% static 'desktop/img/lab-2.png' %}"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition duration-700"
+      />
+    </div>
+
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="flex gap-2 h-[40%]">
+
+    <!-- LEFT -->
+    <div
+      class="w-1/2 rounded-lg overflow-hidden border border-white/10"
+    >
+      <img
+        src="{% static 'desktop/img/lab-3.png' %}"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition duration-700"
+      />
+    </div>
+
+    <!-- RIGHT -->
+    <div
+      class="w-1/2 rounded-lg overflow-hidden border border-white/10"
+    >
+      <img
+        src="{% static 'desktop/img/lab-4.png' %}"
+        alt=""
+        class="w-full h-full object-cover hover:scale-[1.03] transition duration-700"
+      />
+    </div>
+
+  </div>
+
+</div>
+
+</div>
+</section>
