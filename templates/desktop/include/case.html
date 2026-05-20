@@ -1,0 +1,209 @@
+{% load static %}
+
+<section
+  class="relative h-screen overflow-hidden px-18 py-16 flex items-center"
+>
+  <!-- background glow -->
+  <div
+    class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-225 bg-primary/10 blur-[180px] rounded-full pointer-events-none"
+  ></div>
+
+  <div
+    class="relative z-10 max-w-400 mx-auto flex items-center gap-14 w-full"
+  >
+
+    <!-- LEFT -->
+    <div
+      class="w-[40%] flex flex-col justify-center"
+    >
+
+      <!-- title -->
+      <h1
+        class="text-5xl  font-bold font-heading text-text mt-10"
+      >
+        Работает
+        внутри компании
+      </h1>
+
+      <!-- desc -->
+      <p
+        class="text-lg text-text/60 leading-relaxed max-w-lg mb-8"
+      >
+        Автоматизировали внутренние процессы
+        и сократили время выполнения задач
+        в несколько раз.
+      </p>
+
+      <!-- cards -->
+      <div class="space-y-2">
+
+        <!-- CARD -->
+        <div
+          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-5"
+        >
+
+          <h3
+            class="text-xl font-bold text-text mb-5"
+          >
+            Подготовка отчётов
+          </h3>
+
+          <div
+            class="flex items-center justify-between"
+          >
+
+            <div>
+              
+              <span
+                class="text-2xl font-bold text-text/80"
+              >
+                4 часа
+              </span>
+              <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                было
+              </span>
+            </div>
+
+            <div class="text-right">
+              <span
+                class="text-2xl font-bold text-primary"
+              >
+                3 минуты
+              </span>
+               <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                стало
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CARD -->
+        <div
+          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-5"
+        >
+
+          <h3
+            class="text-xl font-bold text-text mb-5"
+          >
+            Расчёт заработной платы
+          </h3>
+
+          <div
+            class="flex items-center justify-between"
+          >
+
+            <div>
+              <span
+                class="text-2xl font-bold text-text/80"
+              >
+                2 дня
+              </span>
+              <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                было
+              </span>
+            </div>
+
+            <div class="text-right">             
+
+              <span
+                class="text-2xl font-bold text-primary"
+              >
+                2 часа
+              </span>
+              <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                стало
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CARD -->
+        <div
+          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-5"
+        >
+
+          <h3
+            class="text-xl font-bold text-text mb-5"
+          >
+            Взаимодействие команды
+          </h3>
+
+          <div
+            class="flex items-center justify-between"
+          >
+
+            <div>
+              
+
+              <span
+                class="text-2xl font-bold text-text/80"
+              >
+                хаос
+              </span>
+              <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                было
+              </span>
+            </div>
+            <div class="text-right">
+              
+
+              <span
+                class="text-2xl font-bold text-primary"
+              >
+                прозрачность
+              </span>
+              <span
+                class="text-sm text-text/40 block mb-1"
+              >
+                стало
+              </span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div
+      class="relative w-[60%] flex justify-end items-center"
+    >
+
+      <!-- glow -->
+      <div
+        class="absolute right-10 top-1/2 -translate-y-1/2 w-137.5 h-137.5 bg-primary/20 blur-[140px] rounded-full"
+      ></div>
+
+      <!-- dashboard -->
+      <!-- LIGHT -->
+<img
+  src="{% static 'desktop/img/case-dashbord-light.png' %}"
+  alt=""
+  class="w-full object-contain dark:hidden"
+/>
+
+<!-- DARK -->
+<img
+  src="{% static 'desktop/img/case-dashbord-dark.png' %}"
+  alt=""
+  class="w-full object-contain hidden dark:block"
+/>
+
+    </div>
+
+  </div>
+</section>

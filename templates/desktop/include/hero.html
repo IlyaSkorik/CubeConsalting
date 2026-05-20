@@ -1,113 +1,125 @@
-{% load static %}
+  {% load static %}
 
-<section
-  class="relative w-full min-h-[calc(100vh-6rem)] flex flex-col items-center justify-between bg-[url('/static/desktop/img/hero-bg-light.png')] dark:bg-[url('/static/desktop/img/hero-bg-dark.png')] bg-contain bg-no-repeat bg-center overflow-hidden pt-4 pb-2"
+  <section
+    class="relative w-full min-h-[calc(100vh-6rem)] flex flex-col items-center justify-between bg-[url('/static/desktop/img/hero-bg-light.png')] dark:bg-[url('/static/desktop/img/hero-bg-dark.png')] bg-contain bg-no-repeat bg-center overflow-hidden pt-4 pb-2"
+  >
+  <!-- 3D BACKGROUND -->
+<div
+  id="hero-3d-wrapper"
+  class="absolute inset-0 z-0 pointer-events-none overflow-hidden"
 >
-  <div
-    class="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto mt-4"
-  >
-    <h1
-      class="font-heading 2xl:text-5xl text-6xl font-bold text-text leading-[1.15] tracking-tight mb-3"
-    >
-      Прорыв там,<br />где другие видят стены
-    </h1>
-
-    <p
-      class="text-text/70 text-base 2xl:text-sm max-w-2xl mb-4 leading-relaxed"
-    >
-      Автоматизация бизнес-решений. Сокращаем время реакции от часов до минут.
-    </p>
-
-    <div class="flex items-center gap-4"> 
-  <!-- Первая кнопка -->
-  <button class="bg-primary hover:bg-primary/80 text-bg dark:text-text font-semibold px-7 2xl:py-3 py-3.5 rounded-lg flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(var(--primary),0.45)] transition cursor-pointer leading-none"> 
-    <div class="w-5 h-5 fill-bg dark:fill-text flex items-center justify-center"> 
-      <svg xmlns="http://w3.org" viewBox="0 0 400 400" class="w-full h-full"> 
-        <path class="st0" d="M336.2,264.2c-3.5,12.1-6,22.2-17.1,28.7c-26.1,15.2-78.4,44-103.8,58.4c-12.1,6.6-17.6,11.2-16.8-7.1 c0.3-31.2-0.6-96.2,0.4-129.1c1.2-11.4,9.7-13,19.8-19.5c26.9-15.5,75.6-43.8,101-58.4c4.1-1.9,10-6.7,12.5-1.1 c3.3,13.5,0.3,36,2,50.1c1.4,14.4,9-6.5,11.4-10.2c12.1-26.7,32-59.6,41.9-88.1c1.9-13.3-16.4-11.7-25.7-13.3 c-37.1-2.7-80.7-7.8-106.6-8.4c-5.4,1.8,39.4,23.5,43.6,26.7c14.9,8.6,21.8,11.8,3.9,21c-28.9,16.3-82.2,48.5-112.8,64.8 c-2.6,1.1-4.8,1.5-7.1,1.2c-32.4-13.9-84.5-48.4-116.5-65.5c-3.9-3-14.5-6.2-12.4-11.4c25.7-17.9,69.5-38.8,102.5-58.2 c21.7-13.2,30.1-14.6,55.1-11.4c5.8-0.2,33.1,4.3,34.4-0.1c-1.2-2-4-3.5-6.2-5c-12-6.8-31.6-18-45.9-25c-9.2-4.6-14.3-3.1-21.8,1.1 c-5.5,3-13.1,7.2-22.3,12.2C112,37.3,68.8,61,30.9,81.9c-6.2,3.4-12,6.5-17.8,9.9c-6.3,3.8-7.4,6-7.7,13.7 c-0.2,19.4,0,38.3-0.1,58.3c0.1,41.8-0.2,91.5,0.2,130.9c0,7.1,3.7,9.9,9.4,13.1c36.3,20.3,119.5,67.3,162.8,91 c6.1,3.4,10.4,1.4,16.1-1.7c35.2-19.8,116.1-65.2,157.7-88.8c14.1-6.7,9.8-22.2,10.7-35c-0.2-16.3,1-37.3-0.7-52.7 c-2.3-16.6-24.8,39.2-25.3,43.6L336.2,264.2z M168.6,358.6c-1.8,1.8-13.2-5.8-17.8-8.2c-21.1-12.1-48.9-27.9-71.2-40.6 c-9.2-5.2-17.9-10.2-26.7-15.2c-2.5-1.4-4.9-2.8-7.2-4.2c-6.4-3.9-8-5.9-8.4-12.3c-0.4-20.9-0.1-41.7-0.2-63c0-23.2,0-48.5,0-70.2 c0-5.2-0.2-14.5,1.6-14.8c1.6-1.1,5.1,1,11.5,4.8c17.7,10.5,39.6,23.6,59,35.1c18.4,11.1,36.6,21.5,54.5,32.6 c5.4,3.6,6.3,6,6.5,13.6c0.1,2.7,0.1,5.5,0.1,8.4c0,10.1,0,20.1,0,30.7c0,25.5,0,56.3,0,80.7c0,3.8,0,7.3,0,11 C170.2,353.8,170.2,357.6,168.6,358.6L168.6,358.6z"/> 
-      </svg> 
-    </div> 
-    <span class="inline-block align-middle">Запустить прорыв</span> 
-  </button> 
-
-  <!-- Вторая кнопка -->
-  <button class="bg-text/10 hover:bg-text/10 border border-text/10 text-text/80 font-medium px-7 py-3 rounded-lg transition backdrop-blur-[1px] cursor-pointer flex items-center justify-center gap-2 leading-none"> 
-    <div class="w-5 h-5 fill-text/70 text-text/70 flex items-center justify-center"> 
-      <svg viewBox="0 0 400 400" xmlns="http://w3.org" class="w-full h-full"> 
-        <path class="st0" d="M34.3,0.4c-1.7,1.2-2.1,3.5-2.4,6c-0.5,4.3-0.5,8.9-0.5,13.4c0.1,109.3-0.5,260.6,0,369.5 c0.3,6.6,1.1,10,3.4,10.6c1.6,0.4,4-0.5,7.5-2.4c4.2-2.5,9.5-5.9,14.2-9C117.3,347.8,277,243,329.3,207.3c6-4.7,8.5-7.8,1.5-13.5 C247.7,137.2,134.6,63.7,51.6,8.2C47.1,5.7,38.7-1.4,34.3,0.4L34.3,0.4z M60,46c1.6-0.7,3.2,0,5,0.8c3,1.5,6.1,3.5,9.1,5.5 c64,42.9,152.2,100,215.9,143.8c5.6,4.7,3.2,7.3-1.6,11.1c-48.8,33.4-172,114.1-214.9,142.8c-4.4,2.6-9.3,6.6-13,6.2 c-2-0.5-2.7-3.2-3-8.4c-0.5-84.5,0-201.4-0.1-286.2C57.8,57.2,56.9,48.5,60,46L60,46z"/> 
-      </svg> 
-    </div> 
-    <span class="inline-block align-middle">Попробовать демо</span> 
-  </button> 
+  <canvas
+    id="hero-canvas"
+    class="absolute inset-0 w-full h-full block"
+  ></canvas>
 </div>
+    <div
+      class="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto mt-4"
+    >
+      <h1
+        class="font-heading 2xl:text-5xl text-6xl font-bold text-text leading-[1.15] tracking-tight mb-3"
+      >
+        Прорыв там,<br />где другие видят стены
+      </h1>
 
+      <p
+        class="text-text/70 text-base 2xl:text-sm max-w-2xl mb-4 leading-relaxed"
+      >
+        Автоматизация бизнес-решений. Сокращаем время реакции от часов до минут.
+      </p>
+
+      <div class="flex items-center gap-4"> 
+    <!-- Первая кнопка -->
+    <button class="launch-btn bg-primary hover:bg-primary/80 text-bg dark:text-text font-semibold px-7 2xl:py-3 py-3.5 rounded-md flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(var(--primary),0.45)] transition cursor-pointer leading-none"> 
+      <div class="w-5 h-5 fill-bg dark:fill-text flex items-center justify-center"> 
+        <svg xmlns="http://w3.org" viewBox="0 0 400 400" class="w-full h-full"> 
+          <path class="st0" d="M336.2,264.2c-3.5,12.1-6,22.2-17.1,28.7c-26.1,15.2-78.4,44-103.8,58.4c-12.1,6.6-17.6,11.2-16.8-7.1 c0.3-31.2-0.6-96.2,0.4-129.1c1.2-11.4,9.7-13,19.8-19.5c26.9-15.5,75.6-43.8,101-58.4c4.1-1.9,10-6.7,12.5-1.1 c3.3,13.5,0.3,36,2,50.1c1.4,14.4,9-6.5,11.4-10.2c12.1-26.7,32-59.6,41.9-88.1c1.9-13.3-16.4-11.7-25.7-13.3 c-37.1-2.7-80.7-7.8-106.6-8.4c-5.4,1.8,39.4,23.5,43.6,26.7c14.9,8.6,21.8,11.8,3.9,21c-28.9,16.3-82.2,48.5-112.8,64.8 c-2.6,1.1-4.8,1.5-7.1,1.2c-32.4-13.9-84.5-48.4-116.5-65.5c-3.9-3-14.5-6.2-12.4-11.4c25.7-17.9,69.5-38.8,102.5-58.2 c21.7-13.2,30.1-14.6,55.1-11.4c5.8-0.2,33.1,4.3,34.4-0.1c-1.2-2-4-3.5-6.2-5c-12-6.8-31.6-18-45.9-25c-9.2-4.6-14.3-3.1-21.8,1.1 c-5.5,3-13.1,7.2-22.3,12.2C112,37.3,68.8,61,30.9,81.9c-6.2,3.4-12,6.5-17.8,9.9c-6.3,3.8-7.4,6-7.7,13.7 c-0.2,19.4,0,38.3-0.1,58.3c0.1,41.8-0.2,91.5,0.2,130.9c0,7.1,3.7,9.9,9.4,13.1c36.3,20.3,119.5,67.3,162.8,91 c6.1,3.4,10.4,1.4,16.1-1.7c35.2-19.8,116.1-65.2,157.7-88.8c14.1-6.7,9.8-22.2,10.7-35c-0.2-16.3,1-37.3-0.7-52.7 c-2.3-16.6-24.8,39.2-25.3,43.6L336.2,264.2z M168.6,358.6c-1.8,1.8-13.2-5.8-17.8-8.2c-21.1-12.1-48.9-27.9-71.2-40.6 c-9.2-5.2-17.9-10.2-26.7-15.2c-2.5-1.4-4.9-2.8-7.2-4.2c-6.4-3.9-8-5.9-8.4-12.3c-0.4-20.9-0.1-41.7-0.2-63c0-23.2,0-48.5,0-70.2 c0-5.2-0.2-14.5,1.6-14.8c1.6-1.1,5.1,1,11.5,4.8c17.7,10.5,39.6,23.6,59,35.1c18.4,11.1,36.6,21.5,54.5,32.6 c5.4,3.6,6.3,6,6.5,13.6c0.1,2.7,0.1,5.5,0.1,8.4c0,10.1,0,20.1,0,30.7c0,25.5,0,56.3,0,80.7c0,3.8,0,7.3,0,11 C170.2,353.8,170.2,357.6,168.6,358.6L168.6,358.6z"/> 
+        </svg> 
+      </div> 
+      <span class="inline-block align-middle">Запустить прорыв</span> 
+    </button> 
+
+    <!-- Вторая кнопка -->
+    <button class="bg-text/10 hover:bg-text/10 border border-text/10 text-text/80 font-medium px-7 py-3 rounded-md transition backdrop-blur-[1px] cursor-pointer flex items-center justify-center gap-2 leading-none"> 
+      <div class="w-5 h-5 fill-text/70 text-text/70 flex items-center justify-center"> 
+        <svg viewBox="0 0 400 400" xmlns="http://w3.org" class="w-full h-full"> 
+          <path class="st0" d="M34.3,0.4c-1.7,1.2-2.1,3.5-2.4,6c-0.5,4.3-0.5,8.9-0.5,13.4c0.1,109.3-0.5,260.6,0,369.5 c0.3,6.6,1.1,10,3.4,10.6c1.6,0.4,4-0.5,7.5-2.4c4.2-2.5,9.5-5.9,14.2-9C117.3,347.8,277,243,329.3,207.3c6-4.7,8.5-7.8,1.5-13.5 C247.7,137.2,134.6,63.7,51.6,8.2C47.1,5.7,38.7-1.4,34.3,0.4L34.3,0.4z M60,46c1.6-0.7,3.2,0,5,0.8c3,1.5,6.1,3.5,9.1,5.5 c64,42.9,152.2,100,215.9,143.8c5.6,4.7,3.2,7.3-1.6,11.1c-48.8,33.4-172,114.1-214.9,142.8c-4.4,2.6-9.3,6.6-13,6.2 c-2-0.5-2.7-3.2-3-8.4c-0.5-84.5,0-201.4-0.1-286.2C57.8,57.2,56.9,48.5,60,46L60,46z"/> 
+        </svg> 
+      </div> 
+      <span class="inline-block align-middle">Попробовать демо</span> 
+    </button> 
   </div>
-  <div
-    class="relative z-10 w-9/12 max-w-140 flex items-center justify-between border dark:border-black/5 bg-white/5 border-primary/30 dark:bg-primary/5 backdrop-blur-[1px] rounded-2xl px-4 py-2 mt-auto shadow-[0_0_50px_-12px_rgba(var(--accent),0.15)]"
-  >
-    <div class="flex items-center gap-4 group">
-      <div
-        class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-      >
-        ⚡
-      </div>
-      <div class="flex flex-col">
-        <span
-          class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
-          >зкономия</span
-        >
-        <span
-          class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-          >40</span
-        >
-        <span
-          class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-          >часов/неделю</span
-        >
-      </div>
-    </div>
 
-    <div class="flex items-center gap-4 group">
-      <div
-        class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-      >
-        📦
-      </div>
-      <div class="flex flex-col">
-        <span
-          class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
-          >скорость решений</span
-        >
-        <span
-          class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-          >х10</span
-        >
-        <span
-          class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-          >в среднем</span
-        >
-      </div>
     </div>
+ 
+    <div
+      class="relative z-10 w-9/12 max-w-140 flex items-center justify-between border dark:border-black/5 bg-white/5 border-primary/30 dark:bg-primary/5 backdrop-blur-[1px] rounded-md px-4 py-2 mt-auto shadow-[0_0_50px_-12px_rgba(var(--accent),0.15)]"
+    >
+      <div class="flex items-center gap-4 group">
+        <div
+          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
+        >
+          ⚡
+        </div>
+        <div class="flex flex-col">
+          <span
+            class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
+            >зкономия</span
+          >
+          <span
+            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
+            >40</span
+          >
+          <span
+            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
+            >часов/неделю</span
+          >
+        </div>
+      </div>
 
-    <div class="flex items-center gap-4 group">
-      <div
-        class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-      >
-        👥
+      <div class="flex items-center gap-4 group">
+        <div
+          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
+        >
+          📦
+        </div>
+        <div class="flex flex-col">
+          <span
+            class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
+            >скорость решений</span
+          >
+          <span
+            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
+            >х10</span
+          >
+          <span
+            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
+            >в среднем</span
+          >
+        </div>
       </div>
-      <div class="flex flex-col">
-        <span
-          class="text-sm/tight text-center font-semibold text-text/50 dark:text-text/40 tracking-wider"
-          >внедрено за</span
+
+      <div class="flex items-center gap-4 group">
+        <div
+          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
         >
-        <span
-          class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-          >3</span
-        >
-        <span
-          class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-          >дня</span
-        >
+          👥
+        </div>
+        <div class="flex flex-col">
+          <span
+            class="text-sm/tight text-center font-semibold text-text/50 dark:text-text/40 tracking-wider"
+            >внедрено за</span
+          >
+          <span
+            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
+            >3</span
+          >
+          <span
+            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
+            >дня</span
+          >
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+  {% comment %} <script type="module" src="{% static '/desktop/js/three-hero.bundled.js ' %}"></script> {% endcomment %}
