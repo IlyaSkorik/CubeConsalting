@@ -1,0 +1,321 @@
+{% load static %}
+
+<section
+  id="demo"
+  class="relative h-screen overflow-hidden bg-bg px-20 py-10 flex items-center"
+>
+
+  <!-- glow -->
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-225 bg-primary/10 blur-[180px] rounded-full pointer-events-none"
+  ></div>
+
+  <!-- wrapper -->
+  <div
+    class="relative z-10 max-w-425 mx-auto flex items-center justify-between gap-10 w-full"
+  >
+
+    <!-- LEFT -->
+    <div class="w-[40%]">
+
+      <!-- title -->
+      <h2
+        class="text-5xl font-heading font-bold tracking-tight text-text mb-6"
+      >
+        Сколько времени
+        вы теряете
+        на рутине?
+      </h2>
+
+      <!-- text -->
+      <p
+        class="text-text/70 text-base leading-relaxed mb-6 max-w-140"
+      >
+        Ответьте на 3 вопроса и получите
+        расчёт потенциальной экономии
+        времени и бюджета.
+      </p>
+
+      <!-- calculator -->
+      <div class="space-y-8">
+
+        <!-- STEP 1 -->
+        <div>
+
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-primary font-semibold text-lg">
+              1 / 3
+            </span>
+
+            <span class="text-text font-medium text-lg">
+              Размер команды
+            </span>
+          </div>
+
+          <div class="flex gap-3 w-full" id="team-buttons">
+
+            <button
+              data-team="20"
+              class="team-btn w-3/4 px-6 py-2.5 rounded-md border transition cursor-pointer"
+            >
+              5-30
+            </button>
+
+            <button
+              data-team="40"
+              class="team-btn w-3/4  px-6 py-2.5 rounded-md border transition cursor-pointer"
+            >
+              20-50
+            </button>
+
+            <button
+              data-team="80"
+              class="team-btn w-3/4  px-6 py-2.5 rounded-md border transition cursor-pointer"
+            >
+              50-100
+            </button>
+
+            <button
+              data-team="120"
+              class="team-btn w-3/4  px-6 py-2.5 rounded-md border transition cursor-pointer"
+            >
+              100+
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- STEP 2 -->
+        <div>
+
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-primary font-semibold text-lg">
+              2 / 3
+            </span>
+
+            <span class="text-text font-medium text-lg">
+              Сколько часов уходит на рутину?
+            </span>
+          </div>
+
+          <input
+            id="hours-range"
+            type="range"
+            min="5"
+            max="80"
+            value="32"
+            class="w-full accent-primary cursor-pointer"
+          />
+
+          <div
+            class="flex justify-between mt-3 text-sm text-text/40"
+          >
+            <span>5</span>
+
+            <span
+              id="hours-value"
+              class="text-primary font-semibold"
+            >
+              32 часа
+            </span>
+
+            <span>80</span>
+          </div>
+
+        </div>
+
+        <!-- STEP 3 -->
+        <div>
+
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-primary font-semibold text-lg">
+              3 / 3
+            </span>
+
+            <span class="text-text font-medium text-lg">
+              Где работает команда?
+            </span>
+          </div>
+
+          <div class="flex gap-3 w-full" id="platform-buttons">
+
+            <button
+              data-platform="telegram"
+              data-multiplier="1"
+              class="platform-btn px-6 py-2.5 w-1/3 rounded-md border transition cursor-pointer"
+            >
+              Telegram
+            </button>
+
+            <button
+              data-platform="web"
+              data-multiplier="1.2"
+              class="platform-btn px-6 py-2.5 w-1/3 rounded-md border transition cursor-pointer"
+            >
+              Web-панель
+            </button>
+
+            <button
+              data-platform="all"
+              data-multiplier="1.5"
+              class="platform-btn px-6 py-2.5 w-1/3 rounded-md border transition cursor-pointer"
+            >
+              Всё вместе
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <button
+        id="launch-btn"
+        class="mt-10 px-7 max-w-130 py-2.5 cursor-pointer rounded-md bg-primary text-white text-lg font-semibold shadow-[0_20px_60px_rgba(var(--primary),0.35)] hover:scale-[1.01] transition"
+      >
+        Запустить прорыв →
+      </button>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="w-1/2">
+
+      <div
+        class="rounded-lg border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/3 backdrop-blur-2xl p-10"
+      >
+
+        <!-- result -->
+        <div class="mb-5">
+
+          <span
+            class="text-primary font-semibold uppercase text-sm"
+          >
+            Ваш результат
+          </span>
+
+          <h3
+            class="text-2xl font-bold text-text mt-4"
+          >
+            Вы теряете:
+          </h3>
+
+        </div>
+
+        <!-- top -->
+        <div class="grid grid-cols-2 gap-4 mb-5">
+
+          <!-- HOURS -->
+          <div
+            class="rounded-lg bg-white/70 dark:bg-white/3 border border-black/5 dark:border-white/10 p-5"
+          >
+
+            <div
+              id="lost-hours"
+              class="text-5xl font-bold text-primary mb-3"
+            >
+              112
+            </div>
+
+            <div
+              id="lost-hours-text"
+              class="text-text/50 text-lg"
+            >
+              часов в месяц
+            </div>
+
+          </div>
+
+          <!-- MONEY -->
+          <div
+            class="rounded-lg bg-white/70 dark:bg-white/3 border border-black/5 dark:border-white/10 p-5"
+          >
+
+            <div
+              id="lost-money"
+              class="text-5xl font-bold text-primary mb-3"
+            >
+              1 120 000 ₽
+            </div>
+
+            <div
+              class="text-text/50 text-lg"
+            >
+              в месяц
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- divider -->
+        <div
+          class="h-px bg-black/5 dark:bg-white/10 my-5"
+        ></div>
+
+        <!-- bottom -->
+        <div>
+
+          <h3
+            class="text-2xl font-bold text-text mb-5"
+          >
+            С нашей системой вы вернёте:
+          </h3>
+
+          <div class="grid grid-cols-2 gap-5">
+
+            <!-- saved hours -->
+            <div
+              class="rounded-lg bg-green-500/5 border border-green-500/10 p-5"
+            >
+
+              <div
+                id="saved-hours"
+                class="text-5xl font-bold text-green-500 mb-3"
+              >
+                ~90
+              </div>
+
+              <div
+                id="saved-hours-text"
+                class="text-text/50 text-lg"
+              >
+                часов в месяц
+              </div>
+
+            </div>
+
+            <!-- saved money -->
+            <div
+               class="rounded-lg bg-green-500/5 border border-green-500/10 p-5"
+            >
+
+              <div
+                id="saved-money"
+                class="text-5xl font-bold text-green-500 mb-3"
+              >
+                ~900 000 ₽
+              </div>
+
+              <div
+                class="text-text/50 text-lg"
+              >
+                в месяц
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<script src="{% static 'desktop/js/demo.js' %}"></script>
