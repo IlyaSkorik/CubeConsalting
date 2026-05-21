@@ -17,3 +17,10 @@
 }
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@layer utilities {
+  .hero-active {
+    /* kept empty: glow is applied to SVG via JS (drop-shadow) to follow path/contour */
+    @apply transition-all duration-300;
+  }
+}
