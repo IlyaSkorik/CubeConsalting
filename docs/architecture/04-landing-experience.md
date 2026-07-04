@@ -272,8 +272,21 @@ engine:
    engine's own copy (`build:landing --alias:three=…`) so there is a single instance;
    `tsconfig.landing.json` maps its types. The eye follows cube → energy → module.
 
-**Reduced motion:** the cube emits no pulses (cables rest at a faint ambient glow),
-so nothing in the DOM ticks; cards sit on their depth layer without motion.
+4. **Idle motion (living sway, not a spin)** — the hero cube must feel like a calm
+   breathing intelligence, not a product turntable. `landing.ts` overrides the cube's
+   transform every idle frame with a slow, quasi-periodic **oscillation** — gently
+   right, back to centre, gently left, never a full revolution (≈±10° yaw, ±1.5°
+   pitch, ±0.5° roll, plus a slight vertical float). Two incommensurate sines per axis
+   keep it from ever feeling mechanical, and light damping gives it weight. It is
+   written **absolutely each frame** so the engine's own `rotation.y += …` can only
+   add one frame's delta on top (it never accumulates into a spin) — a consumer-side
+   override that leaves the engine and the tokens untouched. The 3D cables inherit the
+   motion for free because they read the cube's live world matrix. Under reduced motion
+   the sway resolves to a still, calm pose.
+
+**Reduced motion:** the cube holds a still pose, emits no pulses (cables rest at a
+faint ambient glow), so nothing in the DOM ticks; cards sit on their depth layer
+without motion.
 **Performance:** ~6 ribbons of `2 × CABLE_SAMPLES` vertices updated in place per frame
 while the hero leads, hidden otherwise; one scene, one engine, one render loop
 (the ribbons ride the existing loop). It is composition only — the invariants in §8

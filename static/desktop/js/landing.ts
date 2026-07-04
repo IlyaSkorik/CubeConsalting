@@ -58,6 +58,14 @@ const PULSE: Record<string, { dur: number; phase: number }> = {
 const CABLE_SAMPLES = 28; // points along each cable
 const CABLE_WIDTH = 0.06; // world-space half-width of the glowing ribbon
 
+// Idle "living" sway (radians / world units). A calm, quasi-periodic oscillation —
+// gently right, back to centre, gently left — never a full revolution. The character
+// of a heavy suspended object, not a product turntable.
+const SWAY_YAW = 0.175; // ≈ ±10° about Y
+const SWAY_PITCH = 0.026; // ≈ ±1.5° about X
+const SWAY_ROLL = 0.009; // ≈ ±0.5° about Z
+const SWAY_FLOAT = 0.05; // slight vertical drift
+
 /** A single station on the journey: a section on the page ↔ a cube state + flavor. */
 interface Beat {
   /** id of the <section> that, when dominant in the viewport, owns this beat. */
@@ -302,6 +310,36 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   const scene = engine.scene;
   const N = CABLE_SAMPLES;
 
+  // Idle sway: overrides the engine's continuous spin from the consumer side (no
+  // engine edit). Set absolutely every frame so the engine's `rotation.y += …` can
+  // only ever add one frame's delta on top — it never accumulates into a spin. Two
+  // incommensurate sines per axis keep the motion quasi-periodic (never mechanical),
+  // and light damping gives it weight and prevents any snap when idle resumes.
+  let swX = 0.02;
+  let swY = 0.06;
+  let swZ = 0;
+  let swPy = 0;
+  const applyIdleSway = (timeMs: number): void => {
+    let tX: number, tY: number, tZ: number, tPy: number;
+    if (REDUCED_MOTION) {
+      // Reduced motion: a still, calm pose (this also stops the engine's spin).
+      tX = 0.02; tY = 0.06; tZ = 0; tPy = 0;
+    } else {
+      const s = timeMs / 1000;
+      tY = SWAY_YAW * (0.82 * Math.sin(s * 0.449) + 0.18 * Math.sin(s * 0.712 + 1.3));
+      tX = SWAY_PITCH * (0.7 * Math.sin(s * 0.571 + 0.5) + 0.3 * Math.sin(s * 0.37));
+      tZ = SWAY_ROLL * Math.sin(s * 0.31 + 2.1);
+      tPy = SWAY_FLOAT * (0.7 * Math.sin(s * 0.785) + 0.3 * Math.sin(s * 0.52 + 0.8));
+    }
+    const k = 0.08; // damping → weight, and a smooth ease when idle resumes
+    swX += (tX - swX) * k;
+    swY += (tY - swY) * k;
+    swZ += (tZ - swZ) * k;
+    swPy += (tPy - swPy) * k;
+    cube.object.rotation.set(swX, swY, swZ);
+    cube.object.position.y = swPy;
+  };
+
   interface Cable {
     id: string;
     node: HTMLElement;
@@ -348,6 +386,10 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   const vProj = new Vector3();
 
   const updateCables = (timeMs: number): void => {
+    // Drive the living sway whenever the cube rests (hero and footer are idle beats),
+    // before anything reads the cube's matrix, so the cables inherit the motion.
+    if (activeBeat.state === 'idle') applyIdleSway(timeMs);
+
     const active = activeBeat.id === 'hero';
     for (const c of cables) c.mesh.visible = active;
     if (!active || cables.length === 0) return;
