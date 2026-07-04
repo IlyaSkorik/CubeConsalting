@@ -2,8 +2,10 @@
 
 <section
   id="demo"
-  class="relative h-screen overflow-hidden bg-bg px-20 py-10 flex items-center"
+  class="relative h-screen overflow-hidden px-20 py-10 flex items-center"
 >
+  <!-- the one cube converges behind this closing invitation -->
+  <div class="cube-scrim"></div>
 
   <!-- glow -->
   <div
@@ -21,6 +23,7 @@
       <!-- title -->
       <h2
         class="text-5xl font-heading font-bold tracking-tight text-text mb-6"
+        data-reveal
       >
         Сколько времени
         вы теряете
@@ -30,6 +33,7 @@
       <!-- text -->
       <p
         class="text-text/70 text-base leading-relaxed mb-6 max-w-140"
+        data-reveal style="--reveal-delay:120ms"
       >
         Ответьте на 3 вопроса и получите
         расчёт потенциальной экономии
@@ -37,7 +41,7 @@
       </p>
 
       <!-- calculator -->
-      <div class="space-y-8">
+      <div class="space-y-8" data-reveal="rise" style="--reveal-delay:240ms">
 
         <!-- STEP 1 -->
         <div>
@@ -181,10 +185,10 @@
     </div>
 
     <!-- RIGHT -->
-    <div class="w-1/2">
+    <div class="w-1/2" data-reveal="emerge" style="--reveal-delay:200ms">
 
       <div
-        class="rounded-lg border border-black/5 dark:border-white/10 bg-white/70 dark:bg-white/3 backdrop-blur-2xl p-10"
+        class="glass rounded-lg p-10"
       >
 
         <!-- result -->

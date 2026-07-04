@@ -4,16 +4,8 @@
     id="hero"
     class="relative w-full min-h-[calc(100vh-6rem)] flex flex-col items-center justify-between bg-[url('/static/desktop/img/hero-bg-light.png')] dark:bg-[url('/static/desktop/img/hero-bg-dark.png')] bg-contain bg-no-repeat bg-center overflow-hidden pt-4 pb-2"
   >
-  <!-- 3D BACKGROUND -->
-<div
-  id="hero-3d-wrapper"
-  class="absolute inset-0 z-0 pointer-events-none overflow-hidden"
->
-  <canvas
-    id="hero-canvas"
-    class="absolute inset-0 w-full h-full block"
-  ></canvas>
-</div>
+  <!-- The cube lives at page level (#cube-stage in home.html) and shows through here.
+       The section's background image remains as the no-WebGL fallback. -->
     <div
       class="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto mt-4"
     >
@@ -136,5 +128,3 @@
       </span>
     </a>
   </section>
-
-  <script type="module" src="{% static 'desktop/js/hero-scene.bundled.js' %}?v={{ APP_VERSION }}"></script>

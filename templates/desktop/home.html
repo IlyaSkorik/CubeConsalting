@@ -8,12 +8,32 @@
     <link rel="stylesheet" href="{% static 'desktop/css/desktop.css' %}?v={{ APP_VERSION }}">
 </head>
 <body class="bg-bg font-sans">
-    {% include 'desktop/include/navbar.html'%}    
+    <!-- THE ONE CUBE — a single persistent scene behind the entire journey.
+         One canvas, one engine, one render loop. Every section scrolls over it and
+         the cube transforms continuously; it never disappears and never resets. -->
+    <div id="cube-stage" aria-hidden="true" class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <canvas id="cube-canvas" class="absolute inset-0 block h-full w-full"></canvas>
+    </div>
+
+    <div class="relative z-10">
+    <!-- Section indicator rail — a quiet map of the one journey -->
+    <nav id="section-rail" aria-label="Разделы" class="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-center gap-3.5 lg:flex">
+      <a href="#hero" data-rail="hero" data-label="Начало" class="rail-dot" aria-label="Начало"></a>
+      <a href="#solutions" data-rail="solutions" data-label="Решения" class="rail-dot" aria-label="Решения"></a>
+      <a href="#case" data-rail="case" data-label="Кейс" class="rail-dot" aria-label="Кейс"></a>
+      <a href="#lab" data-rail="lab" data-label="Лаборатория" class="rail-dot" aria-label="Лаборатория"></a>
+      <a href="#demo" data-rail="demo" data-label="Демо" class="rail-dot" aria-label="Демо"></a>
+      <a href="#footer" data-rail="footer" data-label="Контакты" class="rail-dot" aria-label="Контакты"></a>
+    </nav>
+    {% include 'desktop/include/navbar.html'%}
     {% include 'desktop/include/hero.html'%}    
     {% include 'desktop/include/solutions.html'%}   
     {% include 'desktop/include/case.html'%}   
     {% include 'desktop/include/laboratory.html'%}
     {% include 'desktop/include/demo.html'%}
     {% include 'desktop/include/footer.html' %}
+    </div>
+
+    <script type="module" src="{% static 'desktop/js/landing.bundled.js' %}?v={{ APP_VERSION }}"></script>
 </body>
 </html>

@@ -1,26 +1,23 @@
 {% load static %}
 
-<section id="solutions" class="relative overflow-hidden bg-bg max-h-screen">
-  
+<section id="solutions" class="relative min-h-screen overflow-hidden">
+  <!-- the one cube shows through here; scrim keeps copy legible over it -->
+  <div class="cube-scrim"></div>
+
   <!-- CONTENT -->
-  <div class="relative max-w-7xl mx-auto px-6 py-24 z-10">
-      <div class="max-w-xl">
-        <h2 class="text-5xl font-bold text-text">
-          Одно ядро.
-          <span class="block text-transparent bg-clip-text bg-linear-to-r from-primary/70 to-accent">
-            Любая оболочка.
-          </span>
-        </h2>
+  <div class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+    <div class="max-w-xl" data-reveal="rise">
+      <h2 class="text-5xl font-bold text-text">
+        Одно ядро.
+        <span class="block text-transparent bg-clip-text bg-linear-to-r from-primary/70 to-accent">
+          Любая оболочка.
+        </span>
+      </h2>
 
-        <p class="mt-6 text-normal leading-8 text-text/60 max-w-md">
-          Гибкое ядро автоматизации, которое адаптируется под ваши задачи
-          и масштабируется вместе с вами.
-        </p>
-      </div>
-
-      <div class="relative flex justify-center">
-        <canvas id="solutions-canvas" class="w-full max-w-2xl h-105 sm:h-130 lg:h-155"></canvas>
-      </div>
+      <p class="mt-6 text-normal leading-8 text-text/60 max-w-md">
+        Гибкое ядро автоматизации, которое адаптируется под ваши задачи
+        и масштабируется вместе с вами.
+      </p>
     </div>
   </div>
 
@@ -30,9 +27,10 @@
     <!-- CARD 1 -->
     <div
       class="absolute top-[16%] right-[14%] group scale-90"
+      data-reveal="emerge" style="--reveal-delay:80ms"
     >
      <div
-        class="relative w-70 rounded-lg border border-primary/50 bg-white/3 backdrop-blur-2xl p-7 overflow-hidden"
+        class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
         <div
           class="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"
@@ -120,15 +118,15 @@
           </p>
         </div>
       </div>
-      </div>
     </div>
 
     <!-- CARD 2 -->
     <div
       class="absolute top-[46%] right-[10%] group scale-90"
+      data-reveal="emerge" style="--reveal-delay:220ms"
     >
       <div
-        class="relative w-70 rounded-lg border border-primary/50 bg-white/3 backdrop-blur-2xl p-7 overflow-hidden"
+        class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
         <div
           class="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"
@@ -226,14 +224,14 @@
           </p>
         </div>
       </div>
-      </div>
     </div>
 
     <div
       class="absolute bottom-[10%] right-[15%] group scale-90"
+      data-reveal="emerge" style="--reveal-delay:360ms"
     >
       <div
-        class="relative w-70 rounded-lg border border-primary/50 bg-white/3 backdrop-blur-2xl p-7 overflow-hidden"
+        class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
         <div
           class="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"
@@ -320,16 +318,16 @@
           </p>
         </div>
       </div>
-      </div>
     </div>
 
     
 
      <div
       class="absolute bottom-[23%] left-[13%] group scale-90"
+      data-reveal="emerge" style="--reveal-delay:500ms"
     >
       <div
-        class="relative w-70 rounded-lg border border-primary/50 bg-white/3 backdrop-blur-2xl p-7 overflow-hidden"
+        class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
         <div
           class="absolute inset-0 bg-linear-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"
@@ -388,10 +386,8 @@
           </p>
         </div>
       </div>
-      </div>
     </div>
 
   </div>
 
-  {% comment %} <script type="module" src="{% static '/desktop/js/solutions-3d.js' %}?v={{ APP_VERSION }}"></script> {% endcomment %}
 </section>

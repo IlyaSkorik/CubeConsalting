@@ -4,6 +4,9 @@
   id="case"
   class="relative h-screen overflow-hidden px-20 py-16 flex items-center"
 >
+  <!-- the one cube shows through here -->
+  <div class="cube-scrim"></div>
+
   <!-- background glow -->
   <div
     class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-225 h-225 bg-primary/10 blur-[180px] rounded-full pointer-events-none"
@@ -13,21 +16,21 @@
     <!-- LEFT -->
     <div class="w-[40%] flex flex-col justify-center">
       <!-- title -->
-      <h1 class="text-5xl font-bold font-heading text-text mt-10 mb-6">
+      <h1 class="text-5xl font-bold font-heading text-text mt-10 mb-6" data-reveal>
         Работает внутри компании
       </h1>
 
       <!-- desc -->
-      <p class="text-lg text-text/60 leading-relaxed max-w-lg mb-8">
+      <p class="text-lg text-text/60 leading-relaxed max-w-lg mb-8" data-reveal style="--reveal-delay:120ms">
         Автоматизировали внутренние процессы и сократили время выполнения задач
         в несколько раз.
       </p>
 
       <!-- cards -->
-      <div class="space-y-2">
+      <div class="space-y-2" data-reveal="rise" style="--reveal-delay:240ms">
         <!-- CARD -->
         <div
-          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-3"
+          class="glass rounded-lg px-6 py-3 transition duration-500 hover:-translate-y-0.5"
         >
           <h3 class="text-xl font-bold text-text mb-3">Подготовка отчётов</h3>
 
@@ -46,7 +49,7 @@
 
         <!-- CARD -->
         <div
-          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-3"
+          class="glass rounded-lg px-6 py-3 transition duration-500 hover:-translate-y-0.5"
         >
           <h3 class="text-xl font-bold text-text mb-3">
             Расчёт заработной платы
@@ -67,7 +70,7 @@
 
         <!-- CARD -->
         <div
-          class="rounded-lg border border-black/5 dark:border-white/5 bg-white/70 dark:bg-white/3 backdrop-blur-2xl px-6 py-3"
+          class="glass rounded-lg px-6 py-3 transition duration-500 hover:-translate-y-0.5"
         >
           <h3 class="text-xl font-bold text-text mb-3">
             Взаимодействие команды
@@ -90,7 +93,7 @@
     </div>
 
     <!-- RIGHT -->
-    <div class="relative w-[60%] flex justify-end items-center">
+    <div class="relative w-[60%] flex justify-end items-center" data-reveal="emerge" style="--reveal-delay:200ms">
       <!-- glow -->
       <div
         class="absolute right-10 top-1/2 -translate-y-1/2 w-137.5 h-137.5 bg-primary/20 blur-[140px] rounded-full"

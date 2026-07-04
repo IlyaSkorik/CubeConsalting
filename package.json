@@ -7,9 +7,8 @@
     "dev:desktop": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --watch",
     "dev:mobile": "tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --watch",
     "build": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --minify && tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --minify",
-    "build:three": "esbuild static/desktop/js/three-hero.js --bundle --outfile=static/desktop/js/three-hero.bundled.js --format=esm --minify && esbuild static/desktop/js/solutions-3d.js --bundle --outfile=static/desktop/js/solutions-3d.bundled.js --format=esm --minify",
-    "build:hero": "esbuild static/desktop/js/hero-scene.ts --bundle --outfile=static/desktop/js/hero-scene.bundled.js --format=esm --minify",
-    "build:assets": "npm run build && npm run build:three && npm run build:hero"
+    "build:landing": "esbuild static/desktop/js/landing.ts --bundle --outfile=static/desktop/js/landing.bundled.js --format=esm --minify",
+    "build:assets": "npm run build && npm run build:landing"
   },
   "repository": {
     "type": "git",
