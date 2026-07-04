@@ -56,7 +56,16 @@ const REDUCED_MOTION =
  *   footer    idle      the intelligence settles back to rest, breathing slows
  */
 const BEATS: readonly Beat[] = [
-  { id: 'hero', state: 'idle', accent: 1.25, rest: 'rich' },
+  {
+    id: 'hero',
+    state: 'idle',
+    accent: 1.25,
+    rest: 'rich',
+    // The hero frames the cube as the core of the surrounding interface: the lens
+    // pulls in closer than the idle default ([0,0.8,6]) so the cube reads large and
+    // present at the centre of the constellation. Still a long, calm lens (§7.7).
+    camera: { position: [0, 0.45, 4.6], target: [0, 0, 0], fov: CAMERA.fov },
+  },
   { id: 'solutions', state: 'network', accent: 1.45 },
   { id: 'case', state: 'data', accent: 1.2 },
   { id: 'lab', state: 'grid', accent: 1.35 },
