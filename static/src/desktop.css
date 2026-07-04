@@ -23,4 +23,20 @@
     /* kept empty: glow is applied to SVG via JS (drop-shadow) to follow path/contour */
     @apply transition-all duration-300;
   }
+
+  .navbar-logo-svg {
+    --navbar-logo-stop-1: color-mix(in srgb, var(--color-logo) 25%, #ffffff 75%);
+    --navbar-logo-stop-2: color-mix(in srgb, var(--color-logo) 55%, #ffffff 45%);
+    --navbar-logo-stop-3: var(--color-logo);
+    --navbar-logo-stop-4: color-mix(in srgb, var(--color-logo) 90%, #000000 10%);
+    filter: drop-shadow(0 18px 32px rgba(15,23,42,0.18)) drop-shadow(0 0 6px rgba(0,85,255,0.18));
+  }
+
+  [data-theme="light"] .navbar-logo-svg {
+    --navbar-logo-stop-1: var(--color-logo);
+    --navbar-logo-stop-2: var(--color-logo);
+    --navbar-logo-stop-3: var(--color-logo);
+    --navbar-logo-stop-4: color-mix(in srgb, var(--color-logo) 85%, #000000 15%);
+    filter: drop-shadow(0 12px 18px rgba(15,23,42,0.18));
+  }
 }
