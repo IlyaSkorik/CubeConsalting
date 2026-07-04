@@ -54,7 +54,7 @@
     </div>
  
     <div
-      class="relative z-10 w-9/12 max-w-140 flex items-center justify-between border dark:border-black/5 bg-white/5 border-primary/30 dark:bg-primary/5 backdrop-blur-[1px] rounded-md px-4 py-2 mt-auto shadow-[0_0_50px_-12px_rgba(var(--accent),0.15)]"
+      class="relative z-10 w-9/12 max-w-140 flex items-center justify-between border dark:border-black/5 bg-white/5 border-primary/30 dark:bg-primary/5 backdrop-blur-[1px] rounded-md px-4 py-2 mt-auto mb-10 shadow-[0_0_50px_-12px_rgba(var(--accent),0.15)]"
     >
       <div class="flex items-center gap-4 group">
         <div
@@ -122,5 +122,19 @@
         </div>
       </div>
     </div>
+
+    <!-- SCROLL HINT -->
+    <a
+      href="#solutions"
+      data-section="solutions"
+      aria-label="Прокрутить к следующему разделу"
+      class="hero-scroll-hint absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-text/45 hover:text-text/80 focus-visible:text-text/80 focus-visible:outline-none transition-colors"
+    >
+      <span class="text-[10px] font-medium tracking-[0.28em] uppercase">Листайте</span>
+      <span class="hero-scroll-mouse relative block w-5 h-8 rounded-full border border-current">
+        <span class="hero-scroll-dot absolute left-1/2 top-1.5 -translate-x-1/2 w-1 h-1 rounded-full bg-current"></span>
+      </span>
+    </a>
   </section>
-  {% comment %} <script type="module" src="{% static '/desktop/js/three-hero.bundled.js ' %}"></script> {% endcomment %}
+
+  <script type="module" src="{% static 'desktop/js/hero-scene.bundled.js' %}?v={{ APP_VERSION }}"></script>

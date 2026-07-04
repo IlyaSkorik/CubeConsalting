@@ -17,6 +17,21 @@
     --accent: #00D1FF;
 }
 
+/* Hero scroll indicator — a calm, repeating cue (Motion Bible: motion communicates). */
+@keyframes hero-scroll-dot {
+    0%   { opacity: 0; transform: translate(-50%, 0); }
+    35%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, 12px); }
+}
+
+.hero-scroll-dot {
+    animation: hero-scroll-dot 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-scroll-dot { animation: none; }
+}
+
 @font-face {
     font-family: "Geist";
     src: url("../../fonts/Geist/Geist-Regular.ttf") format("truetype");
