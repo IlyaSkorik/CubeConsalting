@@ -1,11 +1,42 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Куб Консалтинг</title>
+
+    <!-- Set the theme before first paint to prevent a light→dark flash (FOUC). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+
+    <title>CUB LAB — Автоматизация бизнес-решений | Куб Консалтинг</title>
+    <meta name="description" content="Гибкое ядро автоматизации, которое адаптируется под ваши задачи и масштабируется вместе с вами. Сокращаем время реакции от часов до минут." />
+    <meta name="theme-color" content="#0A0C0E" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F8FAFC" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="CUB LAB" />
+    <meta property="og:title" content="CUB LAB — Автоматизация бизнес-решений" />
+    <meta property="og:description" content="Одно ядро. Любая оболочка. Гибкая автоматизация, которая масштабируется вместе с вами." />
+    <meta property="og:image" content="{% static 'desktop/img/hero-bg-dark.png' %}" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/svg+xml" href="{% static 'desktop/img/favicon.svg' %}" />
+    <link rel="preload" as="style" href="{% static 'desktop/css/desktop.css' %}?v={{ APP_VERSION }}" />
     <link rel="stylesheet" href="{% static 'desktop/css/desktop.css' %}?v={{ APP_VERSION }}">
+    <link rel="modulepreload" href="{% static 'desktop/js/landing.bundled.js' %}?v={{ APP_VERSION }}" />
 </head>
 <body class="bg-bg font-sans">
     <!-- THE ONE CUBE — a single persistent scene behind the entire journey.

@@ -2,7 +2,7 @@
 
 <section
   id="case"
-  class="relative h-screen overflow-hidden px-20 py-16 flex items-center"
+  class="relative min-h-screen overflow-hidden px-6 md:px-12 lg:px-20 py-16 flex items-center"
 >
   <!-- the one cube shows through here -->
   <div class="cube-scrim"></div>
@@ -16,9 +16,9 @@
     <!-- LEFT -->
     <div class="w-[40%] flex flex-col justify-center">
       <!-- title -->
-      <h1 class="text-5xl font-bold font-heading text-text mt-10 mb-6" data-reveal>
+      <h2 class="text-5xl font-bold font-heading text-text mt-10 mb-6" data-reveal>
         Работает внутри компании
-      </h1>
+      </h2>
 
       <!-- desc -->
       <p class="text-lg text-text/60 leading-relaxed max-w-lg mb-8" data-reveal style="--reveal-delay:120ms">
@@ -103,14 +103,18 @@
       <!-- LIGHT -->
       <img
         src="{% static 'desktop/img/case-dashbord-light.png' %}"
-        alt=""
+        alt="Панель управления с автоматизированной аналитикой процессов"
+        loading="lazy"
+        decoding="async"
         class="w-full object-contain dark:hidden"
       />
 
       <!-- DARK -->
       <img
         src="{% static 'desktop/img/case-dashbord-dark.png' %}"
-        alt=""
+        alt="Панель управления с автоматизированной аналитикой процессов"
+        loading="lazy"
+        decoding="async"
         class="w-full object-contain hidden dark:block"
       />
     </div>

@@ -151,19 +151,32 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     if (id) railDots.set(id, dot);
   });
 
-  /** Push a beat's personality onto the shared engine (the cube leads — §6). */
+  /** Push a beat's personality onto the shared engine (the cube leads — §6).
+   *  Under reduced motion the cube holds its calm resting form: we skip the large
+   *  state morphs and camera moves, but still light the accent and mark the active
+   *  station so wayfinding and theming stay intact. */
   const applyBeat = (beat: Beat): void => {
     activeBeat = beat;
-    engine.transitionTo(beat.state);
-    // A beat may refine framing after the module set its own preset (this wins).
-    if (beat.camera) engine.cameraRig.applyPreset(beat.camera);
+    if (!REDUCED_MOTION) {
+      engine.transitionTo(beat.state);
+      // A beat may refine framing after the module set its own preset (this wins).
+      if (beat.camera) engine.cameraRig.applyPreset(beat.camera);
+      if (beat.state === 'idle') configureRestEnergy(engine, beat.rest === 'subtle');
+    }
     engine.lighting.setAccentIntensity(baseAccent * beat.accent);
-    if (beat.state === 'idle') configureRestEnergy(engine, beat.rest === 'subtle');
     for (const [id, dot] of railDots) dot.classList.toggle('is-active', id === beat.id);
   };
 
   runtime.start(BEATS[0].state);
   applyBeat(BEATS[0]);
+
+  // Fade the cube in only after it has actually drawn (two frames guarantees the
+  // renderer has cleared and composited at least one full frame).
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.documentElement.dataset.cubeReady = '1';
+    });
+  });
 
   // Hover anywhere over the experience: a brighter breath of energy (§3). Never loud.
   // Suppressed for visitors who prefer reduced motion.
@@ -177,13 +190,15 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   // and re-arm resting energy if the cube is currently at rest.
   engine.events.on('THEME_CHANGED', () => {
     engine.lighting.setAccentIntensity(engine.theme.preset.accent.intensity * activeBeat.accent);
-    if (activeBeat.state === 'idle') configureRestEnergy(engine, activeBeat.rest === 'subtle');
+    if (!REDUCED_MOTION && activeBeat.state === 'idle') {
+      configureRestEnergy(engine, activeBeat.rest === 'subtle');
+    }
   });
 
   // Modules clear energy on enter; when the cube settles back to idle, re-arm the
   // resting energy flavor of whichever idle beat currently leads.
   engine.events.on('CUBE_STATE_CHANGED', ({ to }) => {
-    if (to === 'idle' && activeBeat.state === 'idle') {
+    if (!REDUCED_MOTION && to === 'idle' && activeBeat.state === 'idle') {
       configureRestEnergy(engine, activeBeat.rest === 'subtle');
     }
   });

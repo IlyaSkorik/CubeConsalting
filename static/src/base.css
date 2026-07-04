@@ -206,6 +206,20 @@ button:active { transform: translateY(1px) scale(0.99); }
     button:active { transform: none; }
 }
 
+/* --- Cube loading experience -----------------------------------------------
+   The canvas starts invisible and fades in only once the engine has drawn its
+   first frame (landing.ts sets data-cube-ready), so visitors never see a blank
+   or half-formed cube pop in. If WebGL is unavailable the layer is removed. */
+#cube-stage {
+    opacity: 0;
+    transition: opacity 900ms var(--ease-decelerate);
+}
+html[data-cube-ready="1"] #cube-stage { opacity: 1; }
+html[data-cube="off"] #cube-stage { display: none; }
+@media (prefers-reduced-motion: reduce) {
+    #cube-stage { transition: none; }
+}
+
 @font-face {
     font-family: "Geist";
     src: url("../../fonts/Geist/Geist-Regular.ttf") format("truetype");
