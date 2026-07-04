@@ -96,10 +96,14 @@ cd packages/cube-engine && ./node_modules/.bin/tsc --noEmit
 Typecheck the controller (esbuild does **not** typecheck):
 
 ```bash
-./packages/cube-engine/node_modules/.bin/tsc --noEmit --strict --skipLibCheck \
-  --moduleResolution bundler --module esnext --target es2020 \
-  --lib es2020,dom,dom.iterable static/desktop/js/landing.ts
+./packages/cube-engine/node_modules/.bin/tsc -p tsconfig.landing.json
 ```
+
+> `landing.ts` imports `three` (for the 3D connection cables). `three` ships no
+> types, so `tsconfig.landing.json` maps the `three` specifier to the engine's
+> bundled `@types/three`, and `build:landing` aliases `three` to the engine's own
+> copy so the bundle has a **single** three instance (a second copy would break
+> cross-instance scene operations and bloat the bundle).
 
 ---
 

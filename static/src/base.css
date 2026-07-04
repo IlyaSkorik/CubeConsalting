@@ -288,44 +288,11 @@ html[data-cube="off"] #cube-stage { display: none; }
     100% { opacity: 0; translate: 0 -22px; }
 }
 
-/* Connection layer — links flow from the cube (path start) out to each node. */
-.hero-links {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-    pointer-events: none;
-    overflow: visible;
-}
-.hero-link {
-    fill: none;
-    stroke: color-mix(in srgb, var(--accent) 46%, transparent);
-    stroke-width: 1.4;                 /* per-link width set inline (width variation) */
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--accent) 28%, transparent));
-}
-.hero-link-pulse {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 2.6;
-    stroke-linecap: round;
-    stroke-dasharray: 6 400;      /* one travelling dash (pathLength normalised to 100) */
-    stroke-dashoffset: 100;
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 80%, transparent));
-    animation: hero-flow var(--flow-dur, 2.7s) linear infinite;   /* per-link timing (desynced) */
-    animation-delay: var(--delay, 0s);
-}
-.hero-links.is-paused .hero-link-pulse { animation-play-state: paused; }
-@keyframes hero-flow {
-    from { stroke-dashoffset: 100; }
-    to   { stroke-dashoffset: -8; }
-}
-
-/* Node card — the single glass recipe, on its own depth layer, reactive on
-   energy arrival. Depth = scale + opacity + z-index (set per node); floating uses
-   the `translate` property, pointer-parallax uses `transform` (independent longhands
-   so they never fight), and the arrival glow animates border/shadow only. */
+/* Node card — the single glass recipe, on its own depth layer. Depth = scale +
+   opacity + z-index (set per node); floating uses the `translate` property,
+   pointer-parallax uses `transform` (independent longhands so they never fight).
+   The arrival glow is applied by JS (`.is-lit`) the instant a 3D energy pulse
+   reaches the card, so it stays in sync with the cable — border/shadow only. */
 .hero-node {
     color: var(--text);
     border-radius: 0.9rem;
@@ -338,11 +305,12 @@ html[data-cube="off"] #cube-stage { display: none; }
         0 18px 40px -24px color-mix(in srgb, var(--accent) 40%, transparent);
     opacity: var(--op, 1);
     transform: translate3d(calc(var(--px, 0px) * var(--pf, 1)), calc(var(--py, 0px) * var(--pf, 1)), 0) scale(var(--sc, 1));
-    transition: transform 0.45s var(--ease-decelerate);
-    animation:
-        hero-float var(--float-dur, 9s) ease-in-out infinite,
-        hero-node-arrive var(--flow-dur, 2.7s) var(--ease-standard) infinite;
-    animation-delay: var(--float-delay, 0s), var(--delay, 0s);
+    transition:
+        transform 0.45s var(--ease-decelerate),
+        border-color 0.6s var(--ease-standard),
+        box-shadow 0.6s var(--ease-standard);
+    animation: hero-float var(--float-dur, 9s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
     will-change: transform, translate, box-shadow;
 }
 [data-theme="light"] .hero-node {
@@ -358,21 +326,13 @@ html[data-cube="off"] #cube-stage { display: none; }
 /* Gentle floating (the `translate` property — independent of the parallax transform). */
 @keyframes hero-float { 0%, 100% { translate: 0 -6px; } 50% { translate: 0 6px; } }
 
-/* Arrival glow — border + shadow only (transform is reserved for parallax). */
-@keyframes hero-node-arrive {
-    0%, 60%, 100% {
-        border-color: color-mix(in srgb, var(--text) 10%, transparent);
-        box-shadow:
-            0 1px 0 color-mix(in srgb, #fff 6%, transparent) inset,
-            0 18px 40px -24px color-mix(in srgb, var(--accent) 40%, transparent);
-    }
-    80% {
-        border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-        box-shadow:
-            0 1px 0 color-mix(in srgb, #fff 10%, transparent) inset,
-            0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent),
-            0 22px 55px -22px color-mix(in srgb, var(--accent) 60%, transparent);
-    }
+/* Arrival glow — the pulse just reached this module (JS toggles `.is-lit`). */
+.hero-node.is-lit {
+    border-color: color-mix(in srgb, var(--accent) 48%, transparent);
+    box-shadow:
+        0 1px 0 color-mix(in srgb, #fff 10%, transparent) inset,
+        0 0 0 1px color-mix(in srgb, var(--accent) 24%, transparent),
+        0 22px 55px -22px color-mix(in srgb, var(--accent) 62%, transparent);
 }
 
 .hero-node__head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
@@ -483,7 +443,6 @@ html[data-cube="off"] #cube-stage { display: none; }
     .hero-streak,
     .hero-particles i { animation: none; }
     .hero-node { transform: scale(var(--sc, 1)); translate: none; }   /* depth only, no motion */
-    .hero-link-pulse { animation: none; opacity: 0; }   /* no travelling energy */
     .hero-streak, .hero-particles i { opacity: 0; }
     .hero-progress__fill { width: 72%; }
     .hero-graph span { transform: scaleY(var(--h, 0.5)); }

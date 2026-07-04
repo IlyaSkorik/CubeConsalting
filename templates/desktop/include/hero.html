@@ -20,9 +20,10 @@
     </div>
     <div class="hero-aura" aria-hidden="true"></div>
 
-    <!-- Procedural connection layer: energy links flowing cube → interface nodes.
-         Geometry is computed in hero-composition.js; the flow itself is pure CSS. -->
-    <svg id="hero-links" class="hero-links hidden lg:block" aria-hidden="true"></svg>
+    <!-- The connection cables are REAL 3D objects in the cube's scene (built in
+         landing.ts): they leave the cube's ports in world space and fade toward the
+         cards below. There is deliberately no SVG overlay here. -->
+
 
     <!-- HEADLINE — unchanged structure, now the voice above a live system. -->
     <div

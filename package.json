@@ -7,7 +7,7 @@
     "dev:desktop": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --watch",
     "dev:mobile": "tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --watch",
     "build": "tailwindcss -i ./static/src/desktop.css -o ./static/desktop/css/desktop.css --minify && tailwindcss -i ./static/src/mobile.css -o ./static/mobile/css/mobile.css --minify",
-    "build:landing": "esbuild static/desktop/js/landing.ts --bundle --outfile=static/desktop/js/landing.bundled.js --format=esm --minify",
+    "build:landing": "esbuild static/desktop/js/landing.ts --bundle --outfile=static/desktop/js/landing.bundled.js --format=esm --minify --alias:three=./packages/cube-engine/node_modules/three",
     "build:assets": "npm run build && npm run build:landing"
   },
   "repository": {

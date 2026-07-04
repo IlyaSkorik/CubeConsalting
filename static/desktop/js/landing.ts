@@ -14,6 +14,15 @@
  * (accent lighting, resting energy, arrival pulse) that the modules leave open.
  */
 import {
+  AdditiveBlending,
+  BufferAttribute,
+  BufferGeometry,
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  Vector3,
+} from 'three';
+import {
   CAMERA,
   CubeEngine,
   type CameraPreset,
@@ -22,30 +31,12 @@ import {
   type Theme,
 } from '../../../packages/cube-engine/src/index';
 
-/** Screen-space attachment points published for the DOM connection layer. */
-interface ScreenPoint {
-  x: number;
-  y: number;
-}
-interface CubePortFrame {
-  /** true only while the hero beat leads and the projection is fresh. */
-  ready: boolean;
-  /** cube centre in viewport px (the outward-normal reference). */
-  cx: number;
-  cy: number;
-  /** each module's port ON the cube surface, viewport px. */
-  ports: Record<string, ScreenPoint>;
-  /** a point just INSIDE the cube per module (where the energy pulse begins). */
-  interior: Record<string, ScreenPoint>;
-}
-
 /**
  * Real attachment points in the cube's LOCAL space (same space as the cubelet
  * lattice; the assembled surface sits at ≈±1.56). Each module plugs into a distinct
- * physical feature — face, edge or corner — at its own depth. These are projected
- * through the cube's live world matrix + camera every frame, so the ports follow
- * breathing, idle rotation, camera moves and pointer parallax. The cube owns the
- * ports; the modules connect to them.
+ * physical feature — face, edge or corner — at its own depth. Every frame the port
+ * is transformed by the cube's live world matrix, so cables leave the actual moving
+ * geometry (breathing, idle rotation, camera, parallax). The cube owns the ports.
  */
 const PORT_LOCAL: Record<string, readonly [number, number, number]> = {
   telegram: [-1.55, 0.6, 0.25], // left face, upper
@@ -55,8 +46,17 @@ const PORT_LOCAL: Record<string, readonly [number, number, number]> = {
   ai: [1.55, -0.2, 0.3], // right face
   api: [1.4, -1.4, 1.2], // front-bottom-right corner
 };
-/** Fraction toward the cube centre for the interior pulse origin (inside the body). */
-const PORT_INTERIOR = 0.32;
+/** Per-module pulse timing (deliberately desynced so the network breathes). */
+const PULSE: Record<string, { dur: number; phase: number }> = {
+  telegram: { dur: 3.1, phase: 0.0 },
+  crm: { dur: 3.7, phase: 0.35 },
+  tasks: { dur: 2.8, phase: 0.6 },
+  analytics: { dur: 3.4, phase: 0.15 },
+  ai: { dur: 2.6, phase: 0.8 },
+  api: { dur: 3.9, phase: 0.45 },
+};
+const CABLE_SAMPLES = 28; // points along each cable
+const CABLE_WIDTH = 0.06; // world-space half-width of the glowing ribbon
 
 /** A single station on the journey: a section on the page ↔ a cube state + flavor. */
 interface Beat {
@@ -288,54 +288,182 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     if (el) observer.observe(el);
   }
 
-  // --- Physical connection ports -------------------------------------------------
-  // Publish, every frame, the screen position of real points ON the cube surface so
-  // the DOM connection layer plugs cables into the geometry itself. Points live in
-  // the cube's local space and are projected through its live world matrix + camera,
-  // so attachment stays correct under breathing, idle rotation, camera moves and
-  // parallax. Consumer-side only — we read cube.object + camera; the engine is not
-  // modified. Only runs while the hero leads (ports are meaningless elsewhere).
+  // --- 3D connection cables ------------------------------------------------------
+  // The connections are REAL objects in the engine's scene, not a screen overlay.
+  // Each module's cable leaves its port ON the cube and follows a cubic bezier through
+  // world space as a camera-facing glowing ribbon — perspective-correct, moved by the
+  // camera, and occluded by the cube when it passes behind it. The far end fades toward
+  // the module's DOM card (the final blend to the flat UI). A pulse travels the ribbon
+  // in 3D; when it reaches the end we emit `hero-pulse` so the DOM module reacts in
+  // sync. Consumer-side only: we add meshes to engine.scene and read cube/camera — the
+  // engine itself is untouched.
   const cube = engine.cube;
   const camera = engine.camera;
-  // Reuse an existing Vector3 instance (no direct `three` import needed — the engine
-  // already owns the class); project() overwrites it each call.
-  const scratch = cube.object.position.clone();
-  const project = (lx: number, ly: number, lz: number): ScreenPoint => {
-    scratch.set(lx, ly, lz).applyMatrix4(cube.object.matrixWorld).project(camera);
-    return {
-      x: (scratch.x * 0.5 + 0.5) * window.innerWidth,
-      y: (-scratch.y * 0.5 + 0.5) * window.innerHeight,
-    };
-  };
-  const portFrame: CubePortFrame = { ready: false, cx: 0, cy: 0, ports: {}, interior: {} };
-  (window as unknown as { __cubePorts: CubePortFrame }).__cubePorts = portFrame;
+  const scene = engine.scene;
+  const N = CABLE_SAMPLES;
 
-  let portRAF = 0;
-  const projectPorts = (): void => {
-    portRAF = requestAnimationFrame(projectPorts);
-    if (activeBeat.id !== 'hero') {
-      portFrame.ready = false;
-      return;
+  interface Cable {
+    id: string;
+    node: HTMLElement;
+    mesh: Mesh;
+    positions: Float32Array;
+    colors: Float32Array;
+    prevPp: number;
+  }
+  const cables: Cable[] = [];
+  for (const id of Object.keys(PORT_LOCAL)) {
+    const node = document.querySelector<HTMLElement>(`[data-node="${id}"]`);
+    if (!node) continue;
+    const positions = new Float32Array(N * 2 * 3);
+    const colors = new Float32Array(N * 2 * 4);
+    const index = new Uint16Array((N - 1) * 6);
+    for (let i = 0; i < N - 1; i++) {
+      const o = i * 6;
+      const a = i * 2;
+      index[o] = a; index[o + 1] = a + 1; index[o + 2] = a + 2;
+      index[o + 3] = a + 1; index[o + 4] = a + 3; index[o + 5] = a + 2;
     }
+    const geom = new BufferGeometry();
+    geom.setAttribute('position', new BufferAttribute(positions, 3));
+    geom.setAttribute('color', new BufferAttribute(colors, 4));
+    geom.setIndex(new BufferAttribute(index, 1));
+    const mat = new MeshBasicMaterial({
+      vertexColors: true,
+      transparent: true,
+      blending: AdditiveBlending,
+      depthWrite: false,
+      side: DoubleSide,
+      toneMapped: false,
+    });
+    const mesh = new Mesh(geom, mat);
+    mesh.frustumCulled = false;
+    mesh.renderOrder = 10; // after the opaque cube
+    scene.add(mesh);
+    cables.push({ id, node, mesh, positions, colors, prevPp: 0 });
+  }
+
+  const vPort = new Vector3();
+  const vCentre = new Vector3();
+  const vEnd = new Vector3();
+  const vProj = new Vector3();
+
+  const updateCables = (timeMs: number): void => {
+    const active = activeBeat.id === 'hero';
+    for (const c of cables) c.mesh.visible = active;
+    if (!active || cables.length === 0) return;
+
     cube.object.updateWorldMatrix(true, false);
     camera.updateMatrixWorld(true);
-    const centre = project(0, 0, 0);
-    portFrame.cx = centre.x;
-    portFrame.cy = centre.y;
-    for (const id in PORT_LOCAL) {
-      const p = PORT_LOCAL[id];
-      portFrame.ports[id] = project(p[0], p[1], p[2]);
-      portFrame.interior[id] = project(p[0] * PORT_INTERIOR, p[1] * PORT_INTERIOR, p[2] * PORT_INTERIOR);
+    const m = cube.object.matrixWorld;
+    vCentre.set(0, 0, 0).applyMatrix4(m);
+    vProj.copy(vCentre).project(camera);
+    const centreSX = (vProj.x * 0.5 + 0.5) * window.innerWidth;
+    const centreSY = (-vProj.y * 0.5 + 0.5) * window.innerHeight;
+
+    const acc = engine.theme.preset.accent.color;
+    const ar = ((acc >> 16) & 255) / 255;
+    const ag = ((acc >> 8) & 255) / 255;
+    const ab = (acc & 255) / 255;
+    const cpx = camera.position.x;
+    const cpy = camera.position.y;
+    const cpz = camera.position.z;
+
+    for (const c of cables) {
+      const lp = PORT_LOCAL[c.id];
+      vPort.set(lp[0], lp[1], lp[2]).applyMatrix4(m);
+      vProj.copy(vPort).project(camera);
+      const portZ = vProj.z; // keep the whole cable near the cube's depth plane
+
+      // The module's DOM card edge, on the side facing the cube → world at port depth.
+      const r = c.node.getBoundingClientRect();
+      const mcx = r.left + r.width / 2;
+      const mcy = r.top + r.height / 2;
+      const dx = centreSX - mcx;
+      const dy = centreSY - mcy;
+      const sEdge = Math.min(r.width / 2 / (Math.abs(dx) || 1), r.height / 2 / (Math.abs(dy) || 1));
+      const edgeX = mcx + dx * sEdge;
+      const edgeY = mcy + dy * sEdge;
+      vEnd
+        .set((edgeX / window.innerWidth) * 2 - 1, -((edgeY / window.innerHeight) * 2 - 1), portZ)
+        .unproject(camera);
+
+      const p0x = vPort.x, p0y = vPort.y, p0z = vPort.z;
+      const p3x = vEnd.x, p3y = vEnd.y, p3z = vEnd.z;
+      // leave the surface along the outward normal (port direction from cube centre)
+      let ox = p0x - vCentre.x, oy = p0y - vCentre.y, oz = p0z - vCentre.z;
+      const ol = Math.hypot(ox, oy, oz) || 1;
+      ox /= ol; oy /= ol; oz /= ol;
+      const chord = Math.hypot(p3x - p0x, p3y - p0y, p3z - p0z) || 1;
+      const lx = (p3x - p0x) / chord, ly = (p3y - p0y) / chord, lz = (p3z - p0z) / chord;
+      const p1x = p0x + ox * chord * 0.4, p1y = p0y + oy * chord * 0.4, p1z = p0z + oz * chord * 0.4;
+      const p2x = p3x - lx * chord * 0.28, p2y = p3y - ly * chord * 0.28, p2z = p3z - lz * chord * 0.28;
+
+      const pl = PULSE[c.id] || { dur: 3, phase: 0 };
+      const pp = REDUCED_MOTION ? -1 : (timeMs / 1000 / pl.dur + pl.phase) % 1;
+      if (!REDUCED_MOTION) {
+        if (pp < c.prevPp) window.dispatchEvent(new CustomEvent('hero-pulse', { detail: { id: c.id } }));
+        c.prevPp = pp;
+      }
+
+      const pos = c.positions;
+      const col = c.colors;
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        const mt = 1 - t;
+        const bx = mt * mt * mt * p0x + 3 * mt * mt * t * p1x + 3 * mt * t * t * p2x + t * t * t * p3x;
+        const by = mt * mt * mt * p0y + 3 * mt * mt * t * p1y + 3 * mt * t * t * p2y + t * t * t * p3y;
+        const bz = mt * mt * mt * p0z + 3 * mt * mt * t * p1z + 3 * mt * t * t * p2z + t * t * t * p3z;
+        const d0 = 3 * mt * mt, d1 = 6 * mt * t, d2 = 3 * t * t;
+        const tx = d0 * (p1x - p0x) + d1 * (p2x - p1x) + d2 * (p3x - p2x);
+        const ty = d0 * (p1y - p0y) + d1 * (p2y - p1y) + d2 * (p3y - p2y);
+        const tz = d0 * (p1z - p0z) + d1 * (p2z - p1z) + d2 * (p3z - p2z);
+        const wx = cpx - bx, wy = cpy - by, wz = cpz - bz;
+        // camera-facing perpendicular = tangent × view
+        let ex = ty * wz - tz * wy;
+        let ey = tz * wx - tx * wz;
+        let ez = tx * wy - ty * wx;
+        const el = Math.hypot(ex, ey, ez) || 1;
+        ex /= el; ey /= el; ez /= el;
+        const width = CABLE_WIDTH * (0.55 + 0.45 * Math.sin(Math.PI * t));
+        const i0 = i * 2 * 3;
+        const i1 = i0 + 3;
+        pos[i0] = bx + ex * width; pos[i0 + 1] = by + ey * width; pos[i0 + 2] = bz + ez * width;
+        pos[i1] = bx - ex * width; pos[i1 + 1] = by - ey * width; pos[i1 + 2] = bz - ez * width;
+
+        // alpha: emerge at the surface, fade into the DOM card at the far end
+        let a = 1;
+        if (t < 0.06) a = t / 0.06;
+        else if (t > 0.78) a = Math.max(0, (1 - t) / 0.22);
+        const bump = pp < 0 ? 0 : Math.exp(-(((t - pp) / 0.05) ** 2));
+        const alpha = Math.min(1, a * (0.32 + bump));
+        const cs = 0.75 + 1.3 * bump;
+        const c0 = i * 2 * 4;
+        const c1 = c0 + 4;
+        col[c0] = ar * cs; col[c0 + 1] = ag * cs; col[c0 + 2] = ab * cs; col[c0 + 3] = alpha;
+        col[c1] = ar * cs; col[c1 + 1] = ag * cs; col[c1 + 2] = ab * cs; col[c1 + 3] = alpha;
+      }
+      (c.mesh.geometry.getAttribute('position') as BufferAttribute).needsUpdate = true;
+      (c.mesh.geometry.getAttribute('color') as BufferAttribute).needsUpdate = true;
     }
-    portFrame.ready = true;
   };
-  projectPorts();
+
+  let cableRAF = 0;
+  const cableLoop = (t: number): void => {
+    cableRAF = requestAnimationFrame(cableLoop);
+    updateCables(t);
+  };
+  cableRAF = requestAnimationFrame(cableLoop);
 
   window.addEventListener(
     'pagehide',
     () => {
       window.clearTimeout(acknowledgeTimer);
-      cancelAnimationFrame(portRAF);
+      cancelAnimationFrame(cableRAF);
+      for (const c of cables) {
+        scene.remove(c.mesh);
+        c.mesh.geometry.dispose();
+        (c.mesh.material as MeshBasicMaterial).dispose();
+      }
       themeObserver.disconnect();
       observer.disconnect();
       runtime.dispose();

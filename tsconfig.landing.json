@@ -1,0 +1,18 @@
+{
+  "//": "Typecheck-only config for the Landing Experience controller. `three` has no bundled types; the engine's node_modules carries @types/three, so map the bare specifier there (esbuild is aliased to the same copy at build time via build:landing).",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "target": "es2020",
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "types": [],
+    "baseUrl": ".",
+    "paths": {
+      "three": ["packages/cube-engine/node_modules/@types/three"]
+    }
+  },
+  "include": ["static/desktop/js/landing.ts"]
+}

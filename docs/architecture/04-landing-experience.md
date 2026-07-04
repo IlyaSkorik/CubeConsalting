@@ -252,25 +252,29 @@ engine:
    its online dot, CRM increments, Аналитика reshapes its graph, AI changes status,
    Интеграции flashes its API dot. The composition ends visually at the cube — no
    bottom metrics panel.
-3. **Energy links** — the composition's signature, physically anchored to the cube.
-   `landing.ts` holds real attachment points in the cube's **local space** (`PORT_LOCAL`
-   — a distinct face / edge / corner per module, at different depths) and every frame
-   projects them through the cube's live world matrix + camera to screen space,
-   publishing `window.__cubePorts` (each port on the surface, plus an interior point).
-   Because the projection uses the cube's own transform, the ports follow breathing,
-   idle rotation, camera moves and pointer parallax — the cables stay plugged in.
-   `hero-composition.js` consumes those ports: each link is a **cubic bezier** that
-   emerges from the surface along the outward normal and sweeps into the module
-   (per-link **width variation**, soft glow, no harsh angles); the **pulse begins
-   inside the cube**, exits through the port, then travels on — so energy visibly
-   originates from the cube. Geometry re-projects each frame via a rAF loop gated by
-   an `IntersectionObserver` (paused off-screen); the pulse and the module's arrival
-   reaction are timed per-link (`--delay`/`--flow-dur`, desynced). If WebGL is absent,
-   it falls back to a silhouette ring so the page still connects. `pathLength="100"`
-   normalises the dash across every length; the eye follows cube → energy → module.
+3. **Energy cables (real 3D objects, not an SVG overlay)** — the signature. Each
+   module's cable is a **mesh in `engine.scene`**, built and animated in `landing.ts`.
+   It starts at a real attachment point in the cube's **local space** (`PORT_LOCAL` —
+   a distinct face / edge / corner per module, at different depths), leaves along the
+   surface normal and follows a **cubic bezier through world space** to a point at the
+   cube's depth that projects onto the module's DOM card edge. It is drawn as a
+   **camera-facing glowing ribbon** (a `BufferGeometry` of `2 × CABLE_SAMPLES` vertices
+   updated in place each frame — no per-frame allocation), additive-blended and
+   `depthWrite:false` but depth-**tested**, so it is naturally occluded when it passes
+   behind the cube. Because everything is in world space through the cube's live
+   matrix + camera, the cables move with breathing, idle rotation, camera and parallax
+   — they read as physically plugged into the geometry. A pulse (a bright band encoded
+   in the per-vertex RGBA) travels the ribbon in 3D; alpha fades over the final ~22%,
+   blending into the flat DOM card. When the pulse reaches the end, `landing.ts` emits
+   a `hero-pulse` event and `hero-composition.js` lights the card + runs its reaction —
+   so the DOM reacts exactly as the 3D energy arrives. Timing is per-cable (`PULSE`,
+   desynced). `three` is imported in `landing.ts` and aliased at build time to the
+   engine's own copy (`build:landing --alias:three=…`) so there is a single instance;
+   `tsconfig.landing.json` maps its types. The eye follows cube → energy → module.
 
-**Reduced motion:** links hold still (`.hero-link-pulse` hidden), no live data
-ticks, cards and graph rest at static values. **Performance:** geometry is a few
-path-string writes per frame while the hero is visible, then it stops; the flow
-animation pauses off-screen. It is composition only — the invariants in §8 still
-hold (one canvas, one engine, one loop).
+**Reduced motion:** the cube emits no pulses (cables rest at a faint ambient glow),
+so nothing in the DOM ticks; cards sit on their depth layer without motion.
+**Performance:** ~6 ribbons of `2 × CABLE_SAMPLES` vertices updated in place per frame
+while the hero leads, hidden otherwise; one scene, one engine, one render loop
+(the ribbons ride the existing loop). It is composition only — the invariants in §8
+still hold.
