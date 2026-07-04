@@ -237,23 +237,37 @@ The hero frames the cube as the **core of a living interface**, not a hero with
 decorative screenshots. Three pieces, none of which add a renderer or touch the
 engine:
 
-1. **Camera** — the hero beat carries a `camera` preset that pulls the lens closer
-   than the idle default (`[0,0.8,6]` → `[0,0.45,4.6]`), so the one cube reads
-   large and central. It is still a long, calm lens (Motion Bible §7.7) and is
-   applied by the existing `cameraRig` — no engine change.
+1. **Camera** — the hero beat carries a `camera` preset well back of the idle
+   default (`[0,0.8,6]` → `[0,0.5,9.0]`), rendering the cube ~40% smaller so it is a
+   compact hub with generous negative space for the network. It stays the centre of
+   gravity and is still a long, calm lens (Motion Bible §7.7) applied by the existing
+   `cameraRig` — no engine change.
 2. **Nodes** — real glass UI components (`.hero-node`), not images: Telegram, CRM,
-   Задачи, Аналитика, AI-агент, Интеграции, plus the metrics panel. They orbit the
-   cube left/right/bottom inside `.hero-constellation` (`aria-hidden`, decorative;
-   the headline/CTAs/metrics/scroll cue carry the real, accessible content). Each
-   uses the shared glass recipe and shows subtle live data (counters, a graph,
-   status, progress, notification dots).
-3. **Energy links** — `static/desktop/js/hero-composition.js` draws one base +
-   one travelling-pulse SVG `<path>` from the cube's screen centre to each node and
-   keeps them glued to the fixed cube via a rAF loop gated by an
-   `IntersectionObserver` (paused when the hero scrolls away). The pulse travel and
-   the node's arrival reaction are **pure CSS**, synchronised by `animation-delay`
-   (`--delay` per node) — so "energy reaches the card, the card lights" needs no JS
-   timing. `pathLength="100"` normalises the dash animation across every link length.
+   Задачи, Аналитика, AI-агент, Интеграции. They orbit the cube left/right inside
+   `.hero-constellation` on distinct **depth layers** (`--sc` scale, `--op` opacity,
+   `z-index`), with gentle floating (`translate`) and subtle pointer parallax
+   (`transform`, scaled by each node's `--pf`). `aria-hidden` — decorative; the
+   headline/CTAs/scroll cue carry the real, accessible content. Each shows subtle
+   live data that updates **as its energy pulse arrives** (see §6): Telegram blinks
+   its online dot, CRM increments, Аналитика reshapes its graph, AI changes status,
+   Интеграции flashes its API dot. The composition ends visually at the cube — no
+   bottom metrics panel.
+3. **Energy links** — the composition's signature, physically anchored to the cube.
+   `landing.ts` holds real attachment points in the cube's **local space** (`PORT_LOCAL`
+   — a distinct face / edge / corner per module, at different depths) and every frame
+   projects them through the cube's live world matrix + camera to screen space,
+   publishing `window.__cubePorts` (each port on the surface, plus an interior point).
+   Because the projection uses the cube's own transform, the ports follow breathing,
+   idle rotation, camera moves and pointer parallax — the cables stay plugged in.
+   `hero-composition.js` consumes those ports: each link is a **cubic bezier** that
+   emerges from the surface along the outward normal and sweeps into the module
+   (per-link **width variation**, soft glow, no harsh angles); the **pulse begins
+   inside the cube**, exits through the port, then travels on — so energy visibly
+   originates from the cube. Geometry re-projects each frame via a rAF loop gated by
+   an `IntersectionObserver` (paused off-screen); the pulse and the module's arrival
+   reaction are timed per-link (`--delay`/`--flow-dur`, desynced). If WebGL is absent,
+   it falls back to a silhouette ring so the page still connects. `pathLength="100"`
+   normalises the dash across every length; the eye follows cube → energy → module.
 
 **Reduced motion:** links hold still (`.hero-link-pulse` hidden), no live data
 ticks, cards and graph rest at static values. **Performance:** geometry is a few

@@ -22,6 +22,42 @@ import {
   type Theme,
 } from '../../../packages/cube-engine/src/index';
 
+/** Screen-space attachment points published for the DOM connection layer. */
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
+interface CubePortFrame {
+  /** true only while the hero beat leads and the projection is fresh. */
+  ready: boolean;
+  /** cube centre in viewport px (the outward-normal reference). */
+  cx: number;
+  cy: number;
+  /** each module's port ON the cube surface, viewport px. */
+  ports: Record<string, ScreenPoint>;
+  /** a point just INSIDE the cube per module (where the energy pulse begins). */
+  interior: Record<string, ScreenPoint>;
+}
+
+/**
+ * Real attachment points in the cube's LOCAL space (same space as the cubelet
+ * lattice; the assembled surface sits at ≈±1.56). Each module plugs into a distinct
+ * physical feature — face, edge or corner — at its own depth. These are projected
+ * through the cube's live world matrix + camera every frame, so the ports follow
+ * breathing, idle rotation, camera moves and pointer parallax. The cube owns the
+ * ports; the modules connect to them.
+ */
+const PORT_LOCAL: Record<string, readonly [number, number, number]> = {
+  telegram: [-1.55, 0.6, 0.25], // left face, upper
+  crm: [-1.55, -0.7, 1.35], // front-left vertical edge, lower
+  tasks: [-0.6, -1.55, 0.8], // bottom face, front-left
+  analytics: [0.75, 1.55, 0.7], // top face, front-right
+  ai: [1.55, -0.2, 0.3], // right face
+  api: [1.4, -1.4, 1.2], // front-bottom-right corner
+};
+/** Fraction toward the cube centre for the interior pulse origin (inside the body). */
+const PORT_INTERIOR = 0.32;
+
 /** A single station on the journey: a section on the page ↔ a cube state + flavor. */
 interface Beat {
   /** id of the <section> that, when dominant in the viewport, owns this beat. */
@@ -61,10 +97,11 @@ const BEATS: readonly Beat[] = [
     state: 'idle',
     accent: 1.25,
     rest: 'rich',
-    // The hero frames the cube as the core of the surrounding interface: the lens
-    // pulls in closer than the idle default ([0,0.8,6]) so the cube reads large and
-    // present at the centre of the constellation. Still a long, calm lens (§7.7).
-    camera: { position: [0, 0.45, 4.6], target: [0, 0, 0], fov: CAMERA.fov },
+    // The hero frames the cube as a compact intelligent hub: the lens sits well back
+    // of the idle default ([0,0.8,6]) so the cube reads ~40% smaller, opening the
+    // negative space the connection network needs. It stays the centre of gravity —
+    // just no longer crowding the frame. Still a long, calm lens (§7.7).
+    camera: { position: [0, 0.5, 9.0], target: [0, 0, 0], fov: CAMERA.fov },
   },
   { id: 'solutions', state: 'network', accent: 1.45 },
   { id: 'case', state: 'data', accent: 1.2 },
@@ -251,10 +288,54 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     if (el) observer.observe(el);
   }
 
+  // --- Physical connection ports -------------------------------------------------
+  // Publish, every frame, the screen position of real points ON the cube surface so
+  // the DOM connection layer plugs cables into the geometry itself. Points live in
+  // the cube's local space and are projected through its live world matrix + camera,
+  // so attachment stays correct under breathing, idle rotation, camera moves and
+  // parallax. Consumer-side only — we read cube.object + camera; the engine is not
+  // modified. Only runs while the hero leads (ports are meaningless elsewhere).
+  const cube = engine.cube;
+  const camera = engine.camera;
+  // Reuse an existing Vector3 instance (no direct `three` import needed — the engine
+  // already owns the class); project() overwrites it each call.
+  const scratch = cube.object.position.clone();
+  const project = (lx: number, ly: number, lz: number): ScreenPoint => {
+    scratch.set(lx, ly, lz).applyMatrix4(cube.object.matrixWorld).project(camera);
+    return {
+      x: (scratch.x * 0.5 + 0.5) * window.innerWidth,
+      y: (-scratch.y * 0.5 + 0.5) * window.innerHeight,
+    };
+  };
+  const portFrame: CubePortFrame = { ready: false, cx: 0, cy: 0, ports: {}, interior: {} };
+  (window as unknown as { __cubePorts: CubePortFrame }).__cubePorts = portFrame;
+
+  let portRAF = 0;
+  const projectPorts = (): void => {
+    portRAF = requestAnimationFrame(projectPorts);
+    if (activeBeat.id !== 'hero') {
+      portFrame.ready = false;
+      return;
+    }
+    cube.object.updateWorldMatrix(true, false);
+    camera.updateMatrixWorld(true);
+    const centre = project(0, 0, 0);
+    portFrame.cx = centre.x;
+    portFrame.cy = centre.y;
+    for (const id in PORT_LOCAL) {
+      const p = PORT_LOCAL[id];
+      portFrame.ports[id] = project(p[0], p[1], p[2]);
+      portFrame.interior[id] = project(p[0] * PORT_INTERIOR, p[1] * PORT_INTERIOR, p[2] * PORT_INTERIOR);
+    }
+    portFrame.ready = true;
+  };
+  projectPorts();
+
   window.addEventListener(
     'pagehide',
     () => {
       window.clearTimeout(acknowledgeTimer);
+      cancelAnimationFrame(portRAF);
       themeObserver.disconnect();
       observer.disconnect();
       runtime.dispose();

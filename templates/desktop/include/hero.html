@@ -9,7 +9,15 @@
        cube reads as the core of a living interface. No mockup images: every surface
        below is a real glass UI component wired to the cube by procedural energy links. -->
 
-    <!-- Soft accent aura behind the constellation (glow, never neon). -->
+    <!-- Atmosphere — supports the cube, never competes: soft glow, volumetric fog,
+         faint light streaks, tiny particles. Nothing cube-shaped. -->
+    <div class="hero-atmosphere" aria-hidden="true">
+      <span class="hero-fog hero-fog--a"></span>
+      <span class="hero-fog hero-fog--b"></span>
+      <span class="hero-streak hero-streak--a"></span>
+      <span class="hero-streak hero-streak--b"></span>
+      <div class="hero-particles" id="hero-particles"></div>
+    </div>
     <div class="hero-aura" aria-hidden="true"></div>
 
     <!-- Procedural connection layer: energy links flowing cube → interface nodes.
@@ -62,7 +70,7 @@
     <div class="hero-constellation hidden lg:block" aria-hidden="true">
 
       <!-- LEFT -->
-      <article class="hero-node" data-node="telegram" style="top:19%; left:3.5%; --delay:0s;">
+      <article class="hero-node" data-node="telegram" style="top:23%; left:8.5%; --pf:.8; --sc:.98; --float-dur:8.5s; --float-delay:-1.2s; z-index:22;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 3 11 14"/><path d="M22 3 15 21l-4-7-7-4 18-7Z"/></svg>
@@ -82,7 +90,7 @@
         </div>
       </article>
 
-      <article class="hero-node" data-node="crm" style="top:44%; left:8%; --delay:.9s;">
+      <article class="hero-node" data-node="crm" style="top:48%; left:12%; --pf:1.05; --sc:1; --float-dur:9.8s; --float-delay:-3.4s; z-index:23;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -99,7 +107,7 @@
         </div>
       </article>
 
-      <article class="hero-node" data-node="tasks" style="top:69%; left:4%; --delay:1.8s;">
+      <article class="hero-node" data-node="tasks" style="top:71%; left:9%; --pf:.5; --sc:.9; --op:.9; --float-dur:11s; --float-delay:-6s; z-index:20;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -114,7 +122,7 @@
       </article>
 
       <!-- RIGHT -->
-      <article class="hero-node" data-node="analytics" style="top:19%; right:3.5%; --delay:.45s;">
+      <article class="hero-node" data-node="analytics" style="top:20%; right:8.5%; --pf:1.15; --sc:1.04; --float-dur:9s; --float-delay:-2.1s; z-index:24;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="m19 9-5 5-4-4-3 3"/></svg>
@@ -130,7 +138,7 @@
         </div>
       </article>
 
-      <article class="hero-node" data-node="ai" style="top:44%; right:8%; --delay:1.35s;">
+      <article class="hero-node" data-node="ai" style="top:45%; right:12%; --pf:.95; --sc:1; --float-dur:10.5s; --float-delay:-4.7s; z-index:22;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2m0 14v2m9-9h-2M5 12H3m14.5-6.5-1.4 1.4M7.9 16.1l-1.4 1.4m0-11.9 1.4 1.4m8.2 8.2 1.4 1.4"/><circle cx="12" cy="12" r="4"/></svg>
@@ -144,7 +152,7 @@
         </div>
       </article>
 
-      <article class="hero-node" data-node="api" style="top:69%; right:4%; --delay:2.25s;">
+      <article class="hero-node" data-node="api" style="top:68%; right:8.5%; --pf:.55; --sc:.92; --op:.9; --float-dur:12s; --float-delay:-7.5s; z-index:20;">
         <header class="hero-node__head">
           <span class="hero-node__icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6M15 2v6M9 22v-6M15 22v-6"/><rect x="7" y="8" width="10" height="8" rx="2"/></svg>
@@ -160,79 +168,6 @@
         </div>
       </article>
 
-    </div>
-
-    <!-- METRICS — real content, now a glass node in the constellation (bottom port). -->
-    <div
-      class="hero-node hero-node--metrics relative z-20 w-9/12 max-w-140 flex items-center justify-between px-4 py-2 mt-auto mb-10"
-      data-node="metrics"
-      style="--delay:2.7s;"
-    >
-      <div class="flex items-center gap-4 group">
-        <div
-          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-        >
-          ⚡
-        </div>
-        <div class="flex flex-col">
-          <span
-            class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
-            >экономия</span
-          >
-          <span
-            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-            >40</span
-          >
-          <span
-            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-            >часов/неделю</span
-          >
-        </div>
-      </div>
-
-      <div class="flex items-center gap-4 group">
-        <div
-          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-        >
-          📦
-        </div>
-        <div class="flex flex-col">
-          <span
-            class="text-sm/tight text-center font-semibold text-text/50 dark:text-white/40 tracking-wider"
-            >скорость решений</span
-          >
-          <span
-            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-            >х10</span
-          >
-          <span
-            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-            >в среднем</span
-          >
-        </div>
-      </div>
-
-      <div class="flex items-center gap-4 group">
-        <div
-          class="flex items-center justify-center text-accent text-4xl drop-shadow-[0_0_8px_rgba(var(--accent),0.6)] transition"
-        >
-          👥
-        </div>
-        <div class="flex flex-col">
-          <span
-            class="text-sm/tight text-center font-semibold text-text/50 dark:text-text/40 tracking-wider"
-            >внедрено за</span
-          >
-          <span
-            class="text-2xl text-center font-bold text-accent drop-shadow-[0_0_12px_rgba(var(--accent),0.4)]"
-            >3</span
-          >
-          <span
-            class="text-xs text-center text-text/60 dark:text-white/50 lowercase"
-            >дня</span
-          >
-        </div>
-      </div>
     </div>
 
     <!-- SCROLL HINT -->
