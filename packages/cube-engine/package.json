@@ -1,0 +1,36 @@
+{
+  "name": "@cublab/cube-engine",
+  "version": "0.1.0",
+  "description": "CUB LAB procedural cube rendering engine. Framework-agnostic Three.js core with optional React Three Fiber bindings.",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@react-three/fiber": ">=8.0.0",
+    "react": ">=18.0.0",
+    "three": ">=0.160.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "@react-three/fiber": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@react-three/fiber": "^9.6.1",
+    "@types/react": "^19.2.17",
+    "@types/three": "^0.184.0",
+    "react": "^19.2.7",
+    "typescript": "^5.6.0"
+  }
+}
