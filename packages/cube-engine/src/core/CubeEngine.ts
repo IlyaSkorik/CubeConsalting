@@ -34,6 +34,8 @@ export interface CubeEngineOptions {
   autoQuality?: boolean;
   initialQuality?: QualityTier;
   dracoDecoderPath?: string;
+  /** Leave the scene background/fog unset so the canvas overlays page content. */
+  transparent?: boolean;
 }
 
 /**
@@ -103,6 +105,7 @@ export class CubeEngine implements Disposable {
       this.events,
     );
     this.environment.attach(this.director.scene);
+    this.environment.setTransparent(options.transparent ?? false);
 
     this.registerDefaultModules();
     this.wireEvents();

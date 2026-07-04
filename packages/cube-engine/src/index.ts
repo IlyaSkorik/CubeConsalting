@@ -64,6 +64,7 @@ export type { CameraPreset } from './rendering/CameraRig';
 export { LightingRig } from './rendering/LightingRig';
 export { EnvironmentManager } from './rendering/EnvironmentManager';
 export { StandaloneRuntime } from './rendering/StandaloneRuntime';
+export type { StandaloneRuntimeOptions } from './rendering/StandaloneRuntime';
 
 // Performance
 export { PerformanceManager } from './performance/PerformanceManager';

@@ -8,20 +8,34 @@ import type { ModuleStateName } from '../state/CubeState';
  * handling. This is the reference host — the R3F binding is an alternative host
  * that reuses the exact same engine (Architecture §4 — one loop, host renders).
  */
+export interface StandaloneRuntimeOptions {
+  /** Render into an existing canvas instead of creating and appending one. */
+  canvas?: HTMLCanvasElement;
+  /** Element to read pointer/hover from (defaults to the canvas). Use when the
+   *  canvas is pointer-events:none, e.g. a background overlay. */
+  interactionTarget?: HTMLElement;
+}
+
 export class StandaloneRuntime implements Disposable {
   private readonly renderer: Renderer;
   private readonly resizeObserver: ResizeObserver;
+  private readonly ownsCanvas: boolean;
   private rafId = 0;
   private running = false;
 
   constructor(
     private readonly engine: CubeEngine,
     private readonly container: HTMLElement,
+    options: StandaloneRuntimeOptions = {},
   ) {
-    this.renderer = new Renderer(engine.theme.preset.exposure);
-    container.appendChild(this.renderer.domElement);
+    this.ownsCanvas = !options.canvas;
+    this.renderer = new Renderer(
+      engine.theme.preset.exposure,
+      options.canvas ? { canvas: options.canvas } : {},
+    );
+    if (this.ownsCanvas) container.appendChild(this.renderer.domElement);
     engine.attachRenderer(this.renderer.gl);
-    engine.attachInteraction(this.renderer.domElement);
+    engine.attachInteraction(options.interactionTarget ?? this.renderer.domElement);
 
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(container);
@@ -45,7 +59,7 @@ export class StandaloneRuntime implements Disposable {
   dispose(): void {
     this.stop();
     this.resizeObserver.disconnect();
-    this.renderer.domElement.remove();
+    if (this.ownsCanvas) this.renderer.domElement.remove();
     this.renderer.dispose();
     this.engine.dispose();
   }

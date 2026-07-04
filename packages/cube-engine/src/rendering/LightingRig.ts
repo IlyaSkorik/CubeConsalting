@@ -50,6 +50,12 @@ export class LightingRig implements Disposable {
     this.accent.position.set(...preset.accent.position);
   }
 
+  /** Fine-tune the accent (the cube's energy source) without redefining the rig.
+   *  Re-apply after a theme change, which resets lights to the preset. */
+  setAccentIntensity(intensity: number): void {
+    this.accent.intensity = intensity;
+  }
+
   setShadowQuality(tier: 'low' | 'medium' | 'high'): void {
     const size = SHADOW_SIZES[tier];
     this.key.castShadow = size > 0;
