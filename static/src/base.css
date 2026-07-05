@@ -433,216 +433,210 @@ html[data-cube="off"] #cube-stage { display: none; }
 }
 
 /* ==========================================================================
-   CUB LAB — Solutions: modular construction
-   Cubelets travel and settle; cards assemble as the final result.
-   Calm, sequential, minimal — one focal point at a time.
+   CUB LAB — Solutions: Platform Reveal (one viewport, 100dvh)
+   Cube at optical centre; four shells emerge from the core.
    ========================================================================== */
 .sol-section {
-    display: flex;
-    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow: hidden;
 }
 
-/* Module cards — manufactured after cubelets gather */
-.sol-card {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.5s var(--ease-standard);
-}
-.sol-card:not(.is-complete):not(.is-focus):not(.is-gathering) {
-    opacity: 0.35;
-}
-.sol-assemble {
-    position: relative;
+.sol-section .cube-scrim::before {
+    background: radial-gradient(
+        ellipse 58% 52% at 50% 54%,
+        transparent 0%,
+        color-mix(in srgb, var(--bg) 16%, transparent) 40%,
+        color-mix(in srgb, var(--bg) 68%, transparent) 66%,
+        color-mix(in srgb, var(--bg) 94%, transparent) 100%
+    );
 }
 
-/* Gathering — cubelets cluster before the card appears */
-.sol-gather {
+.sol-atmosphere {
     position: absolute;
-    inset: -20px;
-    border-radius: 0.85rem;
-    border: 1px dashed color-mix(in srgb, var(--accent) 18%, transparent);
-    opacity: 0;
-    transform: scale(0.96);
-    transition:
-        opacity 0.6s var(--ease-standard),
-        transform 0.7s var(--ease-standard);
+    inset: 0;
     pointer-events: none;
-}
-.sol-card.is-gathering .sol-gather {
-    opacity: 1;
-    transform: scale(1);
-}
-.sol-card.is-focus .sol-gather {
-    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
-}
-
-.sol-frame {
-    position: absolute;
-    inset: -6px;
-    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-    border-radius: 0.65rem;
-    opacity: 0;
-    transform: scale(0.94);
-    transition:
-        opacity 0.45s var(--ease-standard),
-        transform 0.55s var(--ease-standard);
-    pointer-events: none;
-}
-.sol-card.is-framed .sol-frame {
-    opacity: 1;
-    transform: scale(1);
+    z-index: 1;
+    background: radial-gradient(
+        circle at 50% 54%,
+        color-mix(in srgb, var(--accent) 5%, transparent) 0%,
+        transparent 44%
+    );
 }
 
-.sol-glass-stage {
-    opacity: 0;
-    transform: scaleY(0.08);
-    transform-origin: center top;
-    filter: blur(4px);
-    transition:
-        opacity 0.5s var(--ease-standard),
-        transform 0.65s var(--ease-standard),
-        filter 0.55s var(--ease-standard);
-}
-.sol-card.is-glassed .sol-glass-stage {
-    opacity: 1;
-    transform: scaleY(1);
-    filter: blur(0);
-}
-
-.sol-card__body,
-.sol-card h3,
-.sol-card .relative.z-10 > .flex {
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-        opacity 0.4s var(--ease-standard),
-        transform 0.45s var(--ease-standard);
-}
-.sol-card.is-content .sol-card__body,
-.sol-card.is-content h3,
-.sol-card.is-content .relative.z-10 > .flex {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.sol-module-status {
-    position: absolute;
-    top: 10px;
-    right: 12px;
-    opacity: 0;
-    transition: opacity 0.35s var(--ease-standard);
-}
-.sol-status-dot {
-    display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--accent) 80%, transparent);
-    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
-    transform: scale(0);
-    transition: transform 0.4s var(--ease-standard);
-}
-.sol-card.is-status .sol-module-status { opacity: 1; }
-.sol-card.is-status .sol-status-dot { transform: scale(1); }
-
-.sol-module-viz {
-    position: absolute;
-    left: 1.25rem;
-    right: 1.25rem;
-    bottom: 0.85rem;
-    display: flex;
-    align-items: flex-end;
-    gap: 3px;
-    height: 18px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s var(--ease-standard);
-}
-.sol-card.is-viz .sol-module-viz,
-.sol-card.is-complete .sol-module-viz { opacity: 1; }
-
-.sol-module-viz--graph span {
-    flex: 1;
+.sol-stage {
+    isolation: isolate;
     height: 100%;
-    border-radius: 2px 2px 0 0;
-    background: color-mix(in srgb, var(--accent) 35%, transparent);
-    transform: scaleY(0);
-    transform-origin: bottom;
-    transition: transform 0.5s var(--ease-standard);
 }
-.sol-card.is-viz .sol-module-viz--graph span:nth-child(1) { transform: scaleY(0.45); transition-delay: 0s; }
-.sol-card.is-viz .sol-module-viz--graph span:nth-child(2) { transform: scaleY(0.72); transition-delay: 0.06s; }
-.sol-card.is-viz .sol-module-viz--graph span:nth-child(3) { transform: scaleY(0.38); transition-delay: 0.12s; }
-.sol-card.is-viz .sol-module-viz--graph span:nth-child(4) { transform: scaleY(0.9); transition-delay: 0.18s; }
 
-.sol-module-viz--scale span {
-    flex: 1;
-    height: 4px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--text) 12%, transparent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.45s var(--ease-standard);
+.sol-voice {
+    position: relative;
+    z-index: 3;
+    padding-top: clamp(2.25rem, 6.5vh, 4.25rem);
 }
-.sol-card.is-viz .sol-module-viz--scale span:nth-child(1) { transform: scaleX(0.55); transition-delay: 0s; }
-.sol-card.is-viz .sol-module-viz--scale span:nth-child(2) { transform: scaleX(0.82); transition-delay: 0.08s; }
-.sol-card.is-viz .sol-module-viz--scale span:nth-child(3) { transform: scaleX(1); transition-delay: 0.16s; }
 
-.sol-module-viz--manifest span {
-    display: block;
-    height: 3px;
-    border-radius: 2px;
-    background: color-mix(in srgb, var(--text) 14%, transparent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s var(--ease-standard);
+.sol-core {
+    position: absolute;
+    left: 50%;
+    top: 54%;
+    width: min(40vmin, 26rem);
+    height: min(40vmin, 26rem);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
 }
-.sol-module-viz--manifest span:nth-child(1) { width: 88%; }
-.sol-module-viz--manifest span:nth-child(2) { width: 62%; margin-top: 4px; }
-.sol-module-viz--manifest span:nth-child(3) { width: 74%; margin-top: 4px; }
-.sol-card.is-viz .sol-module-viz--manifest span:nth-child(1) { transform: scaleX(1); transition-delay: 0s; }
-.sol-card.is-viz .sol-module-viz--manifest span:nth-child(2) { transform: scaleX(1); transition-delay: 0.07s; }
-.sol-card.is-viz .sol-module-viz--manifest span:nth-child(3) { transform: scaleX(1); transition-delay: 0.14s; }
 
-.sol-module-viz--adapt {
-    justify-content: center;
-    gap: 10px;
-    align-items: center;
+.sol-shells {
+    z-index: 2;
 }
-.sol-module-viz--adapt span {
-    width: 6px;
-    height: 6px;
-    border-radius: 1px;
-    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-    transform: scale(0);
-    transition: transform 0.35s var(--ease-standard);
-}
-.sol-card.is-viz .sol-module-viz--adapt span:nth-child(1) { transform: scale(1); transition-delay: 0s; }
-.sol-card.is-viz .sol-module-viz--adapt span:nth-child(2) { transform: scale(1); transition-delay: 0.08s; }
-.sol-card.is-viz .sol-module-viz--adapt span:nth-child(3) { transform: scale(1); transition-delay: 0.16s; }
 
-.sol-card.is-complete .sol-frame {
-    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+.sol-shell {
+    position: absolute;
+    opacity: 0;
+    --shell-dx: 0;
+    --shell-dy: 0;
+    --shell-edge: 135deg;
+    transform: translate(
+            calc(var(--shell-dx) * (1 - var(--emerge, 0)) * -2.75rem),
+            calc(var(--shell-dy) * (1 - var(--emerge, 0)) * -2.75rem)
+        )
+        scale(calc(0.93 + var(--emerge, 0) * 0.07));
+    filter: blur(calc(3px * (1 - var(--emerge, 0))));
+    transition:
+        opacity 0.85s var(--ease-standard),
+        filter 0.75s var(--ease-standard),
+        transform 0.95s var(--ease-standard);
+    pointer-events: none;
+}
+
+.sol-shell[data-form="0"] {
+    top: 14%;
+    right: clamp(1rem, 4vw, 3rem);
+    --shell-dx: 0.68;
+    --shell-dy: -0.88;
+    --shell-edge: 225deg;
+}
+
+.sol-shell[data-form="1"] {
+    top: 15%;
+    left: clamp(1rem, 4vw, 3rem);
+    --shell-dx: -0.68;
+    --shell-dy: -0.86;
+    --shell-edge: 315deg;
+}
+
+.sol-shell[data-form="2"] {
+    bottom: 10%;
+    right: clamp(1rem, 3.5vw, 2.5rem);
+    --shell-dx: 0.52;
+    --shell-dy: 0.92;
+    --shell-edge: 315deg;
+}
+
+.sol-shell[data-form="3"] {
+    bottom: 12%;
+    left: clamp(1rem, 3vw, 2.5rem);
+    --shell-dx: -0.88;
+    --shell-dy: 0.58;
+    --shell-edge: 135deg;
+}
+
+.sol-shell .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        var(--shell-edge),
+        color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+        transparent 58%
+    );
+    opacity: calc(var(--emerge, 0) * 0.55);
+    pointer-events: none;
+    transition: opacity 0.85s var(--ease-standard);
+}
+
+.sol-shell.is-emerging {
+    opacity: calc(var(--emerge, 0) * 0.9);
+    pointer-events: auto;
+}
+
+.sol-shell.is-active {
+    opacity: 1;
+    filter: blur(0);
+    pointer-events: auto;
+}
+
+.sol-shell.is-manifest {
+    opacity: 0.4;
+    filter: blur(0);
+    pointer-events: auto;
+}
+
+.sol-section.is-complete .sol-shell.is-manifest {
+    opacity: 0.46;
+}
+
+.sol-shell.is-active.is-manifest {
+    opacity: 1;
+}
+
+.sol-shell.is-active .glass {
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
+        inset 0 0 28px -14px color-mix(in srgb, var(--accent) 10%, transparent),
+        0 18px 44px -26px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+@media (max-width: 1023px) {
+    .sol-voice {
+        padding-top: clamp(1.5rem, 5vh, 2.5rem);
+    }
+
+    .sol-voice h2 {
+        font-size: clamp(2rem, 8vw, 2.75rem);
+    }
+
+    .sol-core {
+        width: min(46vmin, 18rem);
+        height: min(46vmin, 18rem);
+        top: 52%;
+    }
+
+    .sol-shell[data-form="0"] {
+        top: 17%;
+        right: 1.5%;
+    }
+
+    .sol-shell[data-form="1"] {
+        top: 18%;
+        left: 1.5%;
+    }
+
+    .sol-shell[data-form="2"] {
+        bottom: 7%;
+        right: 1.5%;
+    }
+
+    .sol-shell[data-form="3"] {
+        bottom: 9%;
+        left: 1.5%;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .sol-gather { display: none; }
-    .sol-card { opacity: 1; }
-    .sol-frame,
-    .sol-glass-stage,
-    .sol-card__body,
-    .sol-card h3,
-    .sol-module-status,
-    .sol-module-viz span { transition: none; }
-    .sol-glass-stage,
-    .sol-card__body,
-    .sol-card h3,
-    .sol-card .relative.z-10 > .flex,
-    .sol-module-status,
-    .sol-module-viz { opacity: 1; transform: none; filter: none; }
-    .sol-frame { opacity: 0; }
-    .sol-status-dot,
-    .sol-module-viz span { transform: none; }
+    .sol-shell {
+        opacity: 1;
+        transform: none;
+        filter: none;
+        pointer-events: auto;
+    }
+
+    .sol-shell .glass::after {
+        opacity: 0.35;
+    }
 
     .hero-node,
     .status-dot,

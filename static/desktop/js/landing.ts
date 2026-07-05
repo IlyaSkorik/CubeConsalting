@@ -30,7 +30,7 @@ import {
   type ModuleStateName,
   type Theme,
 } from '../../../packages/cube-engine/src/index';
-import { CONSTRUCTION } from '../../../packages/cube-engine/src/state/modules/NetworkModule';
+import { TRANSFORMATION } from '../../../packages/cube-engine/src/state/modules/NetworkModule';
 
 /**
  * Real attachment points in the cube's LOCAL space (same space as the cubelet
@@ -94,7 +94,7 @@ const REDUCED_MOTION =
  * while never duplicating an engine system.
  *
  *   hero      idle      the resting mind
- *   solutions network   the core constructs product modules from one intelligence
+ *   solutions network   one core becomes many forms — transformation
  *   case      data      the platform reasons over information (living data surface)
  *   lab       grid      procedural workflow executing across modules
  *   demo      assembly  everything converges into one perfect cube (the invitation)
@@ -386,33 +386,26 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   const vEnd = new Vector3();
   const vProj = new Vector3();
 
-  // The cube's screen centre, published every frame. Section builders (e.g. the
-  // solutions construction workshop) grow beams from this point so topology
-  // visibly originates from the actual cube as it reorganises.
+  // The cube's screen centre — published for section choreography.
   const cubeScreen = { x: 0, y: 0, beat: '', ready: false };
   (window as unknown as { __cubeScreen: typeof cubeScreen }).__cubeScreen = cubeScreen;
 
-  const cubeConstruction = { t: 0, arm: 0, armT: 0, global: 0, ready: false };
-  (window as unknown as { __cubeConstruction: typeof cubeConstruction }).__cubeConstruction = cubeConstruction;
+  // solutions section: cube morph phase for manifestation captions
+  const cubeTransform = { t: 0, form: -1, morphT: 0, ready: false };
+  (window as unknown as { __cubeTransform: typeof cubeTransform }).__cubeTransform = cubeTransform;
 
   let solutionsEnterMs = 0;
   let prevBeatId = BEATS[0].id;
 
-  const constructionAt = (t: number): { global: number; arm: number; armT: number } => {
-    const { blueprintHold, armDuration, armStagger, armCount } = CONSTRUCTION;
-    const total = blueprintHold + (armCount - 1) * armStagger + armDuration;
-    const global = Math.min(1, t / total);
-    let arm = armCount - 1;
-    let armT = 1;
-    for (let a = 0; a < armCount; a++) {
-      const t0 = blueprintHold + a * armStagger;
-      if (t < t0 + armDuration) {
-        arm = a;
-        armT = Math.max(0, Math.min(1, (t - t0) / armDuration));
-        break;
-      }
-    }
-    return { global, arm, armT };
+  const transformPhase = (t: number): { form: number; morphT: number } => {
+    const { introHold, morphDuration, holdAtPeak, formCount } = TRANSFORMATION;
+    const segment = morphDuration + holdAtPeak;
+    if (t < introHold) return { form: -1, morphT: t / introHold };
+    const elapsed = t - introHold;
+    const idx = Math.min(formCount - 1, Math.floor(elapsed / segment));
+    const local = elapsed - idx * segment;
+    if (local < morphDuration) return { form: idx, morphT: local / morphDuration };
+    return { form: idx, morphT: 1 };
   };
 
   const updateCables = (timeMs: number): void => {
@@ -439,14 +432,13 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     }
     if (activeBeat.id === 'solutions') {
       const local = (timeMs - solutionsEnterMs) / 1000;
-      const c = constructionAt(local);
-      cubeConstruction.t = local;
-      cubeConstruction.arm = c.arm;
-      cubeConstruction.armT = c.armT;
-      cubeConstruction.global = c.global;
-      cubeConstruction.ready = true;
+      const phase = transformPhase(local);
+      cubeTransform.t = local;
+      cubeTransform.form = phase.form;
+      cubeTransform.morphT = phase.morphT;
+      cubeTransform.ready = true;
     } else {
-      cubeConstruction.ready = false;
+      cubeTransform.ready = false;
     }
 
     const active = activeBeat.id === 'hero';

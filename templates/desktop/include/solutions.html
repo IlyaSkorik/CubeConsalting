@@ -1,38 +1,33 @@
 {% load static %}
 
-<section id="solutions" class="sol-section relative min-h-[110vh] overflow-hidden">
+<section id="solutions" class="sol-section relative h-screen max-h-screen overflow-hidden">
   <div class="cube-scrim"></div>
+  <div class="sol-atmosphere" aria-hidden="true"></div>
 
-  <!-- ARCHITECTURE — the idea -->
-  <header class="sol-architecture relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-4 lg:pt-20 lg:pb-6">
-    <div class="max-w-xl" data-reveal="rise">
+  <div class="sol-stage relative z-10 h-full w-full">
+    <header class="sol-voice mx-auto text-center px-6" data-reveal="rise">
       <h2 class="text-5xl font-bold text-text">
         Одно ядро.
         <span class="block text-transparent bg-clip-text bg-linear-to-r from-primary/70 to-accent">
           Любая оболочка.
         </span>
       </h2>
-
-      <p class="mt-6 text-normal leading-8 text-text/60 max-w-md">
+      <p class="mt-6 text-normal leading-8 text-text/60 max-w-md mx-auto">
         Гибкое ядро автоматизации, которое адаптируется под ваши задачи
         и масштабируется вместе с вами.
       </p>
-    </div>
-  </header>
+    </header>
 
-  <!-- MODULES — manufactured by the cube -->
-  <div class="sol-modules absolute inset-0 z-10 pointer-events-none">
+    <div class="sol-core" aria-hidden="true"></div>
+
+    <div class="sol-shells absolute inset-0 pointer-events-none">
 
     <!-- CARD 1 -->
     <div
-      class="sol-card absolute top-[12%] right-[8%] group scale-[0.82] pointer-events-auto"
-      data-module="0"
+      class="sol-shell sol-card group pointer-events-auto"
+      data-form="0"
     >
-      <div class="sol-assemble">
-        <div class="sol-gather" aria-hidden="true"></div>
-        <div class="sol-frame" aria-hidden="true"></div>
-        <div class="sol-glass-stage">
-     <div
+      <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
         <div
@@ -121,23 +116,13 @@
           </p>
         </div>
       </div>
-        </div>
-        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
-        <div class="sol-module-viz sol-module-viz--graph" aria-hidden="true">
-          <span></span><span></span><span></span><span></span>
-        </div>
-      </div>
     </div>
 
     <!-- CARD 2 -->
     <div
-      class="sol-card absolute top-[34%] right-[5%] group scale-[0.82] pointer-events-auto"
-      data-module="1"
+      class="sol-shell sol-card group pointer-events-auto"
+      data-form="1"
     >
-      <div class="sol-assemble">
-        <div class="sol-gather" aria-hidden="true"></div>
-        <div class="sol-frame" aria-hidden="true"></div>
-        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -237,22 +222,12 @@
           </p>
         </div>
       </div>
-        </div>
-        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
-        <div class="sol-module-viz sol-module-viz--scale" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
     </div>
 
     <div
-      class="sol-card absolute bottom-[12%] right-[9%] group scale-[0.82] pointer-events-auto"
-      data-module="2"
+      class="sol-shell sol-card group pointer-events-auto"
+      data-form="2"
     >
-      <div class="sol-assemble">
-        <div class="sol-gather" aria-hidden="true"></div>
-        <div class="sol-frame" aria-hidden="true"></div>
-        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -341,24 +316,14 @@
           </p>
         </div>
       </div>
-        </div>
-        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
-        <div class="sol-module-viz sol-module-viz--manifest" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
     </div>
 
     
 
      <div
-      class="sol-card absolute bottom-[24%] left-[6%] group scale-[0.82] pointer-events-auto"
-      data-module="3"
+      class="sol-shell sol-card group pointer-events-auto"
+      data-form="3"
     >
-      <div class="sol-assemble">
-        <div class="sol-gather" aria-hidden="true"></div>
-        <div class="sol-frame" aria-hidden="true"></div>
-        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -419,14 +384,7 @@
           </p>
         </div>
       </div>
-        </div>
-        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
-        <div class="sol-module-viz sol-module-viz--adapt" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
-      </div>
     </div>
-
   </div>
-
+  </div>
 </section>
