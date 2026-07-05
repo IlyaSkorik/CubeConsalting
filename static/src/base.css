@@ -433,55 +433,216 @@ html[data-cube="off"] #cube-stage { display: none; }
 }
 
 /* ==========================================================================
-   CUB LAB — Section construction (Solutions): the cube reveals architecture
-   No expanding pulse / bloom. Energy exits the cube through a port; connections
-   grow (section-network.js) and each card is CONSTRUCTED as its connection lands
-   (a structured wipe — never a scale-pop). processor → bus → network → system.
+   CUB LAB — Solutions: modular construction
+   Cubelets travel and settle; cards assemble as the final result.
+   Calm, sequential, minimal — one focal point at a time.
    ========================================================================== */
-.sol-net {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    pointer-events: none;
-    overflow: visible;
-    opacity: 0;
+.sol-section {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Module cards — manufactured after cubelets gather */
+.sol-card {
+    opacity: 1;
+    visibility: visible;
     transition: opacity 0.5s var(--ease-standard);
 }
-.sol-net.is-active { opacity: 1; }
-.sol-link {
-    fill: none;
-    stroke: color-mix(in srgb, var(--accent) 55%, transparent);
-    stroke-width: 1.6;
-    stroke-linecap: round;
-    stroke-dasharray: 100;          /* pathLength normalised — JS drives the grow */
-    stroke-dashoffset: 100;
-    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 42%, transparent));
+.sol-card:not(.is-complete):not(.is-focus):not(.is-gathering) {
+    opacity: 0.35;
 }
-.sol-node {
-    fill: var(--accent);
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 70%, transparent));
+.sol-assemble {
+    position: relative;
 }
-.sol-origin {
-    fill: var(--accent);
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 80%, transparent));
-    animation: sol-origin-pulse 2.4s ease-in-out infinite;   /* the active port */
-}
-@keyframes sol-origin-pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
 
-/* Cards are CONSTRUCTED (wiped in from the connection side), not scaled/blurred in. */
-.sol-card {
+/* Gathering — cubelets cluster before the card appears */
+.sol-gather {
+    position: absolute;
+    inset: -20px;
+    border-radius: 0.85rem;
+    border: 1px dashed color-mix(in srgb, var(--accent) 18%, transparent);
     opacity: 0;
-    clip-path: inset(0 100% 0 0);
+    transform: scale(0.96);
+    transition:
+        opacity 0.6s var(--ease-standard),
+        transform 0.7s var(--ease-standard);
+    pointer-events: none;
+}
+.sol-card.is-gathering .sol-gather {
+    opacity: 1;
+    transform: scale(1);
+}
+.sol-card.is-focus .sol-gather {
+    border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.sol-frame {
+    position: absolute;
+    inset: -6px;
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    border-radius: 0.65rem;
+    opacity: 0;
+    transform: scale(0.94);
+    transition:
+        opacity 0.45s var(--ease-standard),
+        transform 0.55s var(--ease-standard);
+    pointer-events: none;
+}
+.sol-card.is-framed .sol-frame {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.sol-glass-stage {
+    opacity: 0;
+    transform: scaleY(0.08);
+    transform-origin: center top;
+    filter: blur(4px);
     transition:
         opacity 0.5s var(--ease-standard),
-        clip-path 0.75s var(--ease-standard);
+        transform 0.65s var(--ease-standard),
+        filter 0.55s var(--ease-standard);
 }
-.sol-card[data-build="rtl"] { clip-path: inset(0 0 0 100%); }
-.sol-card.is-built { opacity: 1; clip-path: inset(0 0 0 0); }
+.sol-card.is-glassed .sol-glass-stage {
+    opacity: 1;
+    transform: scaleY(1);
+    filter: blur(0);
+}
+
+.sol-card__body,
+.sol-card h3,
+.sol-card .relative.z-10 > .flex {
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+        opacity 0.4s var(--ease-standard),
+        transform 0.45s var(--ease-standard);
+}
+.sol-card.is-content .sol-card__body,
+.sol-card.is-content h3,
+.sol-card.is-content .relative.z-10 > .flex {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sol-module-status {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-standard);
+}
+.sol-status-dot {
+    display: block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 80%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 50%, transparent);
+    transform: scale(0);
+    transition: transform 0.4s var(--ease-standard);
+}
+.sol-card.is-status .sol-module-status { opacity: 1; }
+.sol-card.is-status .sol-status-dot { transform: scale(1); }
+
+.sol-module-viz {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 0.85rem;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-standard);
+}
+.sol-card.is-viz .sol-module-viz,
+.sol-card.is-complete .sol-module-viz { opacity: 1; }
+
+.sol-module-viz--graph span {
+    flex: 1;
+    height: 100%;
+    border-radius: 2px 2px 0 0;
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.5s var(--ease-standard);
+}
+.sol-card.is-viz .sol-module-viz--graph span:nth-child(1) { transform: scaleY(0.45); transition-delay: 0s; }
+.sol-card.is-viz .sol-module-viz--graph span:nth-child(2) { transform: scaleY(0.72); transition-delay: 0.06s; }
+.sol-card.is-viz .sol-module-viz--graph span:nth-child(3) { transform: scaleY(0.38); transition-delay: 0.12s; }
+.sol-card.is-viz .sol-module-viz--graph span:nth-child(4) { transform: scaleY(0.9); transition-delay: 0.18s; }
+
+.sol-module-viz--scale span {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--text) 12%, transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-standard);
+}
+.sol-card.is-viz .sol-module-viz--scale span:nth-child(1) { transform: scaleX(0.55); transition-delay: 0s; }
+.sol-card.is-viz .sol-module-viz--scale span:nth-child(2) { transform: scaleX(0.82); transition-delay: 0.08s; }
+.sol-card.is-viz .sol-module-viz--scale span:nth-child(3) { transform: scaleX(1); transition-delay: 0.16s; }
+
+.sol-module-viz--manifest span {
+    display: block;
+    height: 3px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--text) 14%, transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-standard);
+}
+.sol-module-viz--manifest span:nth-child(1) { width: 88%; }
+.sol-module-viz--manifest span:nth-child(2) { width: 62%; margin-top: 4px; }
+.sol-module-viz--manifest span:nth-child(3) { width: 74%; margin-top: 4px; }
+.sol-card.is-viz .sol-module-viz--manifest span:nth-child(1) { transform: scaleX(1); transition-delay: 0s; }
+.sol-card.is-viz .sol-module-viz--manifest span:nth-child(2) { transform: scaleX(1); transition-delay: 0.07s; }
+.sol-card.is-viz .sol-module-viz--manifest span:nth-child(3) { transform: scaleX(1); transition-delay: 0.14s; }
+
+.sol-module-viz--adapt {
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+.sol-module-viz--adapt span {
+    width: 6px;
+    height: 6px;
+    border-radius: 1px;
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+    transform: scale(0);
+    transition: transform 0.35s var(--ease-standard);
+}
+.sol-card.is-viz .sol-module-viz--adapt span:nth-child(1) { transform: scale(1); transition-delay: 0s; }
+.sol-card.is-viz .sol-module-viz--adapt span:nth-child(2) { transform: scale(1); transition-delay: 0.08s; }
+.sol-card.is-viz .sol-module-viz--adapt span:nth-child(3) { transform: scale(1); transition-delay: 0.16s; }
+
+.sol-card.is-complete .sol-frame {
+    border-color: color-mix(in srgb, var(--accent) 22%, transparent);
+}
 
 @media (prefers-reduced-motion: reduce) {
-    .sol-net { display: none; }
-    .sol-card { transition: none; }
+    .sol-gather { display: none; }
+    .sol-card { opacity: 1; }
+    .sol-frame,
+    .sol-glass-stage,
+    .sol-card__body,
+    .sol-card h3,
+    .sol-module-status,
+    .sol-module-viz span { transition: none; }
+    .sol-glass-stage,
+    .sol-card__body,
+    .sol-card h3,
+    .sol-card .relative.z-10 > .flex,
+    .sol-module-status,
+    .sol-module-viz { opacity: 1; transform: none; filter: none; }
+    .sol-frame { opacity: 0; }
+    .sol-status-dot,
+    .sol-module-viz span { transform: none; }
 
     .hero-node,
     .status-dot,

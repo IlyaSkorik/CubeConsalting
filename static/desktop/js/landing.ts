@@ -22,7 +22,7 @@ import {
   MeshBasicMaterial,
   Vector3,
 } from 'three';
-import {
+  import {
   CAMERA,
   CubeEngine,
   type CameraPreset,
@@ -30,6 +30,7 @@ import {
   type ModuleStateName,
   type Theme,
 } from '../../../packages/cube-engine/src/index';
+import { CONSTRUCTION } from '../../../packages/cube-engine/src/state/modules/NetworkModule';
 
 /**
  * Real attachment points in the cube's LOCAL space (same space as the cubelet
@@ -93,7 +94,7 @@ const REDUCED_MOTION =
  * while never duplicating an engine system.
  *
  *   hero      idle      the resting mind
- *   solutions network   the platform reaches into external systems
+ *   solutions network   the core constructs product modules from one intelligence
  *   case      data      the platform reasons over information (living data surface)
  *   lab       grid      procedural workflow executing across modules
  *   demo      assembly  everything converges into one perfect cube (the invitation)
@@ -386,10 +387,33 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   const vProj = new Vector3();
 
   // The cube's screen centre, published every frame. Section builders (e.g. the
-  // solutions network) grow their connections from this point, so those connections
-  // visibly originate from the actual cube as it sways and scrolls.
+  // solutions construction workshop) grow beams from this point so topology
+  // visibly originates from the actual cube as it reorganises.
   const cubeScreen = { x: 0, y: 0, beat: '', ready: false };
   (window as unknown as { __cubeScreen: typeof cubeScreen }).__cubeScreen = cubeScreen;
+
+  const cubeConstruction = { t: 0, arm: 0, armT: 0, global: 0, ready: false };
+  (window as unknown as { __cubeConstruction: typeof cubeConstruction }).__cubeConstruction = cubeConstruction;
+
+  let solutionsEnterMs = 0;
+  let prevBeatId = BEATS[0].id;
+
+  const constructionAt = (t: number): { global: number; arm: number; armT: number } => {
+    const { blueprintHold, armDuration, armStagger, armCount } = CONSTRUCTION;
+    const total = blueprintHold + (armCount - 1) * armStagger + armDuration;
+    const global = Math.min(1, t / total);
+    let arm = armCount - 1;
+    let armT = 1;
+    for (let a = 0; a < armCount; a++) {
+      const t0 = blueprintHold + a * armStagger;
+      if (t < t0 + armDuration) {
+        arm = a;
+        armT = Math.max(0, Math.min(1, (t - t0) / armDuration));
+        break;
+      }
+    }
+    return { global, arm, armT };
+  };
 
   const updateCables = (timeMs: number): void => {
     // Drive the living sway whenever the cube rests (hero and footer are idle beats),
@@ -408,6 +432,22 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     cubeScreen.y = centreSY;
     cubeScreen.beat = activeBeat.id;
     cubeScreen.ready = true;
+
+    if (activeBeat.id !== prevBeatId) {
+      if (activeBeat.id === 'solutions') solutionsEnterMs = timeMs;
+      prevBeatId = activeBeat.id;
+    }
+    if (activeBeat.id === 'solutions') {
+      const local = (timeMs - solutionsEnterMs) / 1000;
+      const c = constructionAt(local);
+      cubeConstruction.t = local;
+      cubeConstruction.arm = c.arm;
+      cubeConstruction.armT = c.armT;
+      cubeConstruction.global = c.global;
+      cubeConstruction.ready = true;
+    } else {
+      cubeConstruction.ready = false;
+    }
 
     const active = activeBeat.id === 'hero';
     for (const c of cables) c.mesh.visible = active;

@@ -1,16 +1,10 @@
 {% load static %}
 
-<section id="solutions" class="relative min-h-screen overflow-hidden">
-  <!-- the one cube shows through here; scrim keeps copy legible over it -->
+<section id="solutions" class="sol-section relative min-h-[110vh] overflow-hidden">
   <div class="cube-scrim"></div>
 
-  <!-- Connection network: energy exits the cube through a port and grows connections
-       that construct the cards below (section-network.js). Not a screen decoration —
-       the cube generates the section's topology. -->
-  <svg id="solutions-net" class="sol-net" aria-hidden="true"></svg>
-
-  <!-- CONTENT -->
-  <div class="relative z-10 max-w-7xl mx-auto px-6 py-24">
+  <!-- ARCHITECTURE — the idea -->
+  <header class="sol-architecture relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-4 lg:pt-20 lg:pb-6">
     <div class="max-w-xl" data-reveal="rise">
       <h2 class="text-5xl font-bold text-text">
         Одно ядро.
@@ -24,16 +18,20 @@
         и масштабируется вместе с вами.
       </p>
     </div>
-  </div>
+  </header>
 
-  <!-- FLOATING CARDS -->
-  <div class="absolute inset-0 z-10">
+  <!-- MODULES — manufactured by the cube -->
+  <div class="sol-modules absolute inset-0 z-10 pointer-events-none">
 
     <!-- CARD 1 -->
     <div
-      class="sol-card absolute top-[16%] right-[14%] group scale-90"
-      data-net="0" data-build="ltr"
+      class="sol-card absolute top-[12%] right-[8%] group scale-[0.82] pointer-events-auto"
+      data-module="0"
     >
+      <div class="sol-assemble">
+        <div class="sol-gather" aria-hidden="true"></div>
+        <div class="sol-frame" aria-hidden="true"></div>
+        <div class="sol-glass-stage">
      <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -117,19 +115,29 @@
             </h3>
           </div>
 
-          <p class="text-text/80 text-sm">
+          <p class="text-text/80 text-sm sol-card__body">
             Telegram, Web, App и интеграции
             в единой системе.
           </p>
+        </div>
+      </div>
+        </div>
+        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
+        <div class="sol-module-viz sol-module-viz--graph" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
         </div>
       </div>
     </div>
 
     <!-- CARD 2 -->
     <div
-      class="sol-card absolute top-[46%] right-[10%] group scale-90"
-      data-net="1" data-build="ltr"
+      class="sol-card absolute top-[34%] right-[5%] group scale-[0.82] pointer-events-auto"
+      data-module="1"
     >
+      <div class="sol-assemble">
+        <div class="sol-gather" aria-hidden="true"></div>
+        <div class="sol-frame" aria-hidden="true"></div>
+        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -223,18 +231,28 @@
             </h3>
           </div>
 
-          <p class="text-text/80 text-sm">
+          <p class="text-text/80 text-sm sol-card__body">
             Telegram, Web, App и интеграции
             в единой системе.
           </p>
         </div>
       </div>
+        </div>
+        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
+        <div class="sol-module-viz sol-module-viz--scale" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
     </div>
 
     <div
-      class="sol-card absolute bottom-[10%] right-[15%] group scale-90"
-      data-net="2" data-build="ltr"
+      class="sol-card absolute bottom-[12%] right-[9%] group scale-[0.82] pointer-events-auto"
+      data-module="2"
     >
+      <div class="sol-assemble">
+        <div class="sol-gather" aria-hidden="true"></div>
+        <div class="sol-frame" aria-hidden="true"></div>
+        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -317,10 +335,16 @@
             </h3>
           </div>
 
-          <p class="text-text/80 text-sm">
+          <p class="text-text/80 text-sm sol-card__body">
             Telegram, Web, App и интеграции
             в единой системе.
           </p>
+        </div>
+      </div>
+        </div>
+        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
+        <div class="sol-module-viz sol-module-viz--manifest" aria-hidden="true">
+          <span></span><span></span><span></span>
         </div>
       </div>
     </div>
@@ -328,9 +352,13 @@
     
 
      <div
-      class="sol-card absolute bottom-[23%] left-[13%] group scale-90"
-      data-net="3" data-build="rtl"
+      class="sol-card absolute bottom-[24%] left-[6%] group scale-[0.82] pointer-events-auto"
+      data-module="3"
     >
+      <div class="sol-assemble">
+        <div class="sol-gather" aria-hidden="true"></div>
+        <div class="sol-frame" aria-hidden="true"></div>
+        <div class="sol-glass-stage">
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
       >
@@ -385,10 +413,16 @@
             </h3>
           </div>
 
-          <p class="text-text/80 text-sm">
+          <p class="text-text/80 text-sm sol-card__body">
             Telegram, Web, App и интеграции
             в единой системе.
           </p>
+        </div>
+      </div>
+        </div>
+        <div class="sol-module-status" aria-hidden="true"><span class="sol-status-dot"></span></div>
+        <div class="sol-module-viz sol-module-viz--adapt" aria-hidden="true">
+          <span></span><span></span><span></span>
         </div>
       </div>
     </div>
