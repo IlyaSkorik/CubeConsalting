@@ -46,7 +46,7 @@
       <canvas id="cube-canvas" class="absolute inset-0 block h-full w-full"></canvas>
     </div>
 
-    <div class="relative z-10">
+    <div id="scene-root" class="relative z-10">
     <!-- Section indicator rail — a quiet map of the one journey -->
     <nav id="section-rail" aria-label="Разделы" class="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-center gap-3.5 lg:flex">
       <a href="#hero" data-rail="hero" data-label="Начало" class="rail-dot" aria-label="Начало"></a>
@@ -64,6 +64,9 @@
     {% include 'desktop/include/demo.html'%}
     {% include 'desktop/include/footer.html' %}
     </div>
+
+    <!-- Virtual scroll track — timeline input for scene-based scrolling (N × 100dvh) -->
+    <div id="scroll-track" aria-hidden="true"></div>
 
     <script type="module" src="{% static 'desktop/js/landing.bundled.js' %}?v={{ APP_VERSION }}"></script>
     <script src="{% static 'desktop/js/hero-composition.js' %}?v={{ APP_VERSION }}" defer></script>

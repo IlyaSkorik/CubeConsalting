@@ -204,13 +204,20 @@
     if (!target) return;
     e.preventDefault();
     isAutoScrolling = true;
-    // If target is hero, scroll to very top of document (y=0) to avoid layout gaps
+
+    const sceneScroll = window.__sceneScroll;
+    if (sceneScroll && typeof sceneScroll.goToId === 'function') {
+      sceneScroll.goToId(id, prefersReducedMotion);
+      setClassesActive(link);
+      setTimeout(() => { isAutoScrolling = false; }, prefersReducedMotion ? 80 : 900);
+      return;
+    }
+
     let targetY;
     if (id === 'hero') {
       targetY = 0;
     } else {
       const rect = target.getBoundingClientRect();
-      // Scroll so that section top aligns exactly with viewport top
       targetY = Math.round(rect.top + window.pageYOffset);
     }
     await smoothScrollTo(targetY);
@@ -221,8 +228,42 @@
 
   links.forEach(l => l.addEventListener('click', onLinkClick));
 
+  document.addEventListener('cub:scene-active', (e) => {
+    if (isAutoScrolling || !e.detail) return;
+    const id = e.detail.id;
+    const match = links.find(l => ((l.dataset.section && l.dataset.section.trim()) || (l.getAttribute('href') || '').replace(/^#/, '')) === id);
+    if (match) setClassesActive(match);
+  });
+
+  // Default active link on fresh load (no hash) in cinema mode
+  window.addEventListener('load', () => {
+    if (document.documentElement.dataset.sceneMode === 'cinema' && !location.hash) {
+      syncCinemaNav();
+    }
+  }, { passive: true });
+
+  function syncCinemaNav() {
+    if (document.documentElement.dataset.sceneMode !== 'cinema') return;
+    if (observer) {
+      observer.disconnect();
+      observer = null;
+    }
+    const active = document.querySelector('[data-scene].is-active');
+    if (!active || !active.id) return;
+    const match = links.find(
+      (l) =>
+        ((l.dataset.section && l.dataset.section.trim()) ||
+          (l.getAttribute('href') || '').replace(/^#/, '')) === active.id,
+    );
+    if (match) setClassesActive(match);
+  }
+
   let observer = null;
   function buildObserver() {
+    if (document.documentElement.dataset.sceneMode === 'cinema') {
+      syncCinemaNav();
+      return;
+    }
     if (observer) observer.disconnect();
     navHeight = nav.offsetHeight || nav.clientHeight || 0;
     // Do not offset rootMargin by navbar height — we want sections to be detected based
@@ -241,6 +282,10 @@
     sections.forEach(s => observer.observe(s.el));
   }
   buildObserver();
+  // landing.ts sets data-scene-mode after this script — re-sync once cinema boots
+  requestAnimationFrame(() => {
+    requestAnimationFrame(buildObserver);
+  });
   // ensure hero glow reflects current theme on init
   updateHeroGlow();
 
@@ -279,20 +324,26 @@
   // Если есть хеш при загрузке, установить active и прокрутить корректно
   window.addEventListener('load', async () => {
     const hash = (location.hash || '').replace('#', '');
-    if (hash) {
-      const target = document.getElementById(hash);
+    if (!hash) return;
+    const sceneScroll = window.__sceneScroll;
+    if (sceneScroll && typeof sceneScroll.goToId === 'function') {
       const link = links.find(l => ((l.dataset.section && l.dataset.section.trim()) || (l.getAttribute('href') || '').replace(/^#/, '')) === hash);
-      if (target) {
-        const hashId = hash;
-        if (hashId === 'hero') {
-          await smoothScrollTo(0, 20);
-        } else {
-          const targetY = Math.round(target.getBoundingClientRect().top + window.pageYOffset);
-          await smoothScrollTo(targetY, 20);
-        }
-      }
+      sceneScroll.goToId(hash, true);
       if (link) setClassesActive(link);
+      return;
     }
+    const target = document.getElementById(hash);
+    const link = links.find(l => ((l.dataset.section && l.dataset.section.trim()) || (l.getAttribute('href') || '').replace(/^#/, '')) === hash);
+    if (target) {
+      const hashId = hash;
+      if (hashId === 'hero') {
+        await smoothScrollTo(0, 20);
+      } else {
+        const targetY = Math.round(target.getBoundingClientRect().top + window.pageYOffset);
+        await smoothScrollTo(targetY, 20);
+      }
+    }
+    if (link) setClassesActive(link);
   }, { passive: true });
 
 })();

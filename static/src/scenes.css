@@ -1,0 +1,92 @@
+/* ==========================================================================
+   CUB LAB — Scene-Based Scrolling (cinema mode)
+   Fixed viewport layers + virtual scroll track. Progressive enhancement:
+   without JS or in passive mode, sections remain in normal document flow.
+   ========================================================================== */
+
+html[data-scene-mode='cinema'] {
+    scroll-snap-type: y mandatory;
+}
+
+html[data-scene-mode='cinema'] body {
+    overflow-x: hidden;
+}
+
+#scroll-track {
+    width: 100%;
+    pointer-events: none;
+}
+
+.scroll-snap-page {
+    height: 100vh;
+    height: 100dvh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    pointer-events: none;
+}
+
+html[data-scene-mode='cinema'] #scroll-track {
+    visibility: visible;
+}
+
+#scene-root {
+    position: relative;
+    z-index: 10;
+}
+
+html[data-scene-mode='cinema'] #scene-root [data-scene] {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    will-change: opacity;
+    transition: none;
+}
+
+html[data-scene-mode='cinema'] #scene-root [data-scene].is-active {
+    opacity: 1;
+    z-index: 2;
+}
+
+html[data-scene-mode='cinema'] #scene-root [data-scene].is-entering,
+html[data-scene-mode='cinema'] #scene-root [data-scene].is-leaving {
+    z-index: 3;
+}
+
+html[data-scene-mode='cinema'] #site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+
+html[data-scene-mode='cinema'] #section-rail {
+    position: fixed;
+    z-index: 50;
+}
+
+html[data-scene-mode='passive'] [data-scene] {
+    /* Phase 1–2: normal document flow — visually identical to pre-scene landing */
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-scene-mode='cinema'] {
+        scroll-snap-type: y mandatory;
+    }
+
+    html[data-scene-mode='cinema'] #scene-root [data-scene] {
+        transition: none;
+    }
+}
+
+/* No-JS fallback: sections stack normally */
+html:not([data-scene-mode]) [data-scene] {
+    position: relative;
+}

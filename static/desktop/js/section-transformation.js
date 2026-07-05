@@ -1,9 +1,6 @@
 /*
  * Solutions — Platform Reveal.
- *
- * One core at centre; four shells emerge outward as the cube shifts operational
- * state (NetworkModule). Shells share material DNA with the core — not floating
- * feature cards.
+ * Driven by SceneDirector — starts when solutions scene becomes active.
  */
 (function () {
   var REDUCED_MOTION =
@@ -61,6 +58,7 @@
     var running = false;
     var localT = 0;
     var lastNow = 0;
+    var rafId = 0;
 
     function tick(now) {
       var pub = window.__cubeTransform;
@@ -97,27 +95,32 @@
     function loop(now) {
       if (!running) return;
       tick(now);
-      requestAnimationFrame(loop);
+      rafId = requestAnimationFrame(loop);
     }
 
-    var io = new IntersectionObserver(
-      function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-          if (entries[i].isIntersecting) {
-            if (!running) {
-              running = true;
-              lastNow = performance.now();
-              requestAnimationFrame(loop);
-            }
-          } else {
-            running = false;
-            reset();
-          }
-        }
-      },
-      { threshold: 0.35 },
-    );
-    io.observe(section);
+    function start() {
+      if (running) return;
+      running = true;
+      lastNow = performance.now();
+      rafId = requestAnimationFrame(loop);
+    }
+
+    function stop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      reset();
+    }
+
+    document.addEventListener('cub:scene-active', function (e) {
+      if (e.detail && e.detail.id === 'solutions') start();
+    });
+
+    document.addEventListener('cub:scene-leaving', function (e) {
+      if (e.detail && e.detail.id === 'solutions') stop();
+    });
+
+    /* If solutions is already active on load (deep link). */
+    if (section.dataset.sceneState === 'active') start();
   }
 
   if (document.readyState !== 'loading') init();

@@ -14,5 +14,5 @@
       "three": ["packages/cube-engine/node_modules/@types/three"]
     }
   },
-  "include": ["static/desktop/js/landing.ts"]
+  "include": ["static/desktop/js/landing.ts", "static/desktop/js/scenes/**/*.ts"]
 }

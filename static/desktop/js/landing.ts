@@ -31,6 +31,7 @@ import {
   type Theme,
 } from '../../../packages/cube-engine/src/index';
 import { TRANSFORMATION } from '../../../packages/cube-engine/src/state/modules/NetworkModule';
+import { bootSceneSystem, type SceneSystem } from './scenes/index';
 
 /**
  * Real attachment points in the cube's LOCAL space (same space as the cubelet
@@ -128,6 +129,21 @@ const BEATS: readonly Beat[] = [
 
 const ACKNOWLEDGE_DELAY_MS = 2200;
 
+function applyBeatInitial(
+  engine: CubeEngine,
+  beat: Beat,
+  baseAccent: number,
+  railDots: Map<string, HTMLElement>,
+): void {
+  if (!REDUCED_MOTION) {
+    engine.transitionTo(beat.state);
+    if (beat.camera) engine.cameraRig.applyPreset(beat.camera);
+    if (beat.state === 'idle') configureRestEnergy(engine, beat.rest === 'subtle');
+  }
+  engine.lighting.setAccentIntensity(baseAccent * beat.accent);
+  for (const [id, dot] of railDots) dot.classList.toggle('is-active', id === beat.id);
+}
+
 // Resting energy running through the core = the intelligence is alive (§2, §7.8).
 const CORE_PATH_VERTICAL = 'core-y';
 const CORE_PATH_DIAGONAL = 'core-d';
@@ -157,28 +173,18 @@ function configureRestEnergy(engine: CubeEngine, subtle: boolean): void {
 }
 
 /**
- * Reveal choreography — content emerges as its section enters the viewport and
- * re-hides when it leaves, so the journey reverses perfectly on the way back up.
- * Deliberately independent of the cube engine: even with no WebGL the content
- * still reveals, so the page is never left with invisible cards.
+ * Reveal choreography is driven by SceneDirector (cub:scene-active / leaving).
+ * setupReveal retained as no-op for backwards compatibility during migration.
  */
 function setupReveal(): () => void {
-  const targets = document.querySelectorAll<HTMLElement>('[data-reveal]');
-  if (targets.length === 0) return () => {};
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        entry.target.classList.toggle('is-revealed', entry.isIntersecting);
-      }
-    },
-    { threshold: 0.2, rootMargin: '0px 0px -12% 0px' },
-  );
-  targets.forEach((el) => observer.observe(el));
-  return () => observer.disconnect();
+  return () => {};
 }
 
-function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
+function bootLanding(
+  stage: HTMLElement,
+  canvas: HTMLCanvasElement,
+  sceneSystemParam: SceneSystem | null,
+): void {
   let engine: CubeEngine;
   let runtime: StandaloneRuntime;
 
@@ -195,7 +201,6 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
 
   document.documentElement.dataset.cube = 'on';
 
-  const beatById = new Map(BEATS.map((b) => [b.id, b]));
   let activeBeat: Beat = BEATS[0];
   const baseAccent = engine.theme.preset.accent.intensity;
 
@@ -206,24 +211,31 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     if (id) railDots.set(id, dot);
   });
 
-  /** Push a beat's personality onto the shared engine (the cube leads — §6).
-   *  Under reduced motion the cube holds its calm resting form: we skip the large
-   *  state morphs and camera moves, but still light the accent and mark the active
-   *  station so wayfinding and theming stay intact. */
-  const applyBeat = (beat: Beat): void => {
+  /** Rail + internal state when a scene settles (SceneDirector → CubeTimeline). */
+  const settleBeat = (beat: Beat): void => {
     activeBeat = beat;
-    if (!REDUCED_MOTION) {
-      engine.transitionTo(beat.state);
-      // A beat may refine framing after the module set its own preset (this wins).
-      if (beat.camera) engine.cameraRig.applyPreset(beat.camera);
-      if (beat.state === 'idle') configureRestEnergy(engine, beat.rest === 'subtle');
-    }
-    engine.lighting.setAccentIntensity(baseAccent * beat.accent);
     for (const [id, dot] of railDots) dot.classList.toggle('is-active', id === beat.id);
   };
 
+  // Engine must enter its initial module before SceneDirector applies beat personality.
+  // IdleModule.enter() resets camera and energy; personality layers on top after this.
   runtime.start(BEATS[0].state);
-  applyBeat(BEATS[0]);
+
+  const sceneSystem =
+    sceneSystemParam ??
+    bootSceneSystem({
+      beats: BEATS,
+      engine,
+      baseAccent,
+      reducedMotion: REDUCED_MOTION,
+      configureRestEnergy: (subtle) => configureRestEnergy(engine, subtle),
+      onBeatSettle: settleBeat,
+    });
+
+  if (!sceneSystem) {
+    applyBeatInitial(engine, BEATS[0], baseAccent, railDots);
+    settleBeat(BEATS[0]);
+  }
 
   // Fade the cube in only after it has actually drawn (two frames guarantees the
   // renderer has cleared and composited at least one full frame).
@@ -269,33 +281,8 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
         engine.energy.emitPulse(CORE_PATH_DIAGONAL, { speed: 0.9, intensity: 1.6 });
       }, ACKNOWLEDGE_DELAY_MS);
 
-  // The journey is driven by which section leads the viewport. IntersectionObserver
-  // is inherently reversible: scrolling back makes the previous section dominant
-  // again, which re-applies its beat — no manual reverse logic, no resets.
-  const ratios = new Map<string, number>();
-  const observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
-      }
-      let leaderId = activeBeat.id;
-      let best = -1;
-      for (const beat of BEATS) {
-        const r = ratios.get(beat.id) ?? 0;
-        if (r > best) {
-          best = r;
-          leaderId = beat.id;
-        }
-      }
-      const next = beatById.get(leaderId);
-      if (next && next.id !== activeBeat.id) applyBeat(next);
-    },
-    { threshold: [0, 0.15, 0.35, 0.6, 0.85, 1], rootMargin: '-8% 0px -8% 0px' },
-  );
-  for (const beat of BEATS) {
-    const el = document.getElementById(beat.id);
-    if (el) observer.observe(el);
-  }
+  // The journey is driven by SceneDirector — scroll is timeline input only.
+  // IntersectionObserver is no longer used for beat selection.
 
   // --- 3D connection cables ------------------------------------------------------
   // The connections are REAL objects in the engine's scene, not a screen overlay.
@@ -409,6 +396,7 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   };
 
   const updateCables = (timeMs: number): void => {
+    sceneSystem?.scroll.tick();
     // Drive the living sway whenever the cube rests (hero and footer are idle beats),
     // before anything reads the cube's matrix, so the cables inherit the motion.
     if (activeBeat.state === 'idle') applyIdleSway(timeMs);
@@ -550,14 +538,14 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
         (c.mesh.material as MeshBasicMaterial).dispose();
       }
       themeObserver.disconnect();
-      observer.disconnect();
+      sceneSystem?.dispose();
       runtime.dispose();
     },
     { once: true },
   );
 }
 
-// Reveal choreography runs for every visitor, independent of the cube.
+// Reveal choreography runs via SceneDirector; noop keeps pagehide hook stable.
 const teardownReveal = setupReveal();
 window.addEventListener('pagehide', () => teardownReveal(), { once: true });
 
@@ -565,7 +553,11 @@ const stage = document.getElementById('cube-stage');
 const canvas = document.getElementById('cube-canvas');
 
 if (stage && canvas instanceof HTMLCanvasElement) {
-  bootLanding(stage, canvas);
+  bootLanding(stage, canvas, null);
 } else {
-  console.warn('[landing] Missing #cube-stage / #cube-canvas — the cube is not mounted.');
+  bootSceneSystem({
+    beats: BEATS,
+    reducedMotion: REDUCED_MOTION,
+  });
+  console.warn('[landing] Missing #cube-stage / #cube-canvas — scenes run without the cube.');
 }

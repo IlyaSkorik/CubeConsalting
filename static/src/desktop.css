@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./base.css";
+@import "./scenes.css";
 
 @source "../../templates/desktop";
 
