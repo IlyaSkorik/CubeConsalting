@@ -4,6 +4,11 @@
   <!-- the one cube shows through here; scrim keeps copy legible over it -->
   <div class="cube-scrim"></div>
 
+  <!-- Connection network: energy exits the cube through a port and grows connections
+       that construct the cards below (section-network.js). Not a screen decoration —
+       the cube generates the section's topology. -->
+  <svg id="solutions-net" class="sol-net" aria-hidden="true"></svg>
+
   <!-- CONTENT -->
   <div class="relative z-10 max-w-7xl mx-auto px-6 py-24">
     <div class="max-w-xl" data-reveal="rise">
@@ -26,8 +31,8 @@
 
     <!-- CARD 1 -->
     <div
-      class="absolute top-[16%] right-[14%] group scale-90"
-      data-reveal="emerge" style="--reveal-delay:80ms"
+      class="sol-card absolute top-[16%] right-[14%] group scale-90"
+      data-net="0" data-build="ltr"
     >
      <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
@@ -122,8 +127,8 @@
 
     <!-- CARD 2 -->
     <div
-      class="absolute top-[46%] right-[10%] group scale-90"
-      data-reveal="emerge" style="--reveal-delay:220ms"
+      class="sol-card absolute top-[46%] right-[10%] group scale-90"
+      data-net="1" data-build="ltr"
     >
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
@@ -227,8 +232,8 @@
     </div>
 
     <div
-      class="absolute bottom-[10%] right-[15%] group scale-90"
-      data-reveal="emerge" style="--reveal-delay:360ms"
+      class="sol-card absolute bottom-[10%] right-[15%] group scale-90"
+      data-net="2" data-build="ltr"
     >
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"
@@ -323,8 +328,8 @@
     
 
      <div
-      class="absolute bottom-[23%] left-[13%] group scale-90"
-      data-reveal="emerge" style="--reveal-delay:500ms"
+      class="sol-card absolute bottom-[23%] left-[13%] group scale-90"
+      data-net="3" data-build="rtl"
     >
       <div
         class="glass relative w-70 rounded-lg p-7 overflow-hidden transition duration-500 hover:-translate-y-1"

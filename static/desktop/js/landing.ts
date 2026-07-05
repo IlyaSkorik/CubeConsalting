@@ -385,15 +385,18 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
   const vEnd = new Vector3();
   const vProj = new Vector3();
 
+  // The cube's screen centre, published every frame. Section builders (e.g. the
+  // solutions network) grow their connections from this point, so those connections
+  // visibly originate from the actual cube as it sways and scrolls.
+  const cubeScreen = { x: 0, y: 0, beat: '', ready: false };
+  (window as unknown as { __cubeScreen: typeof cubeScreen }).__cubeScreen = cubeScreen;
+
   const updateCables = (timeMs: number): void => {
     // Drive the living sway whenever the cube rests (hero and footer are idle beats),
     // before anything reads the cube's matrix, so the cables inherit the motion.
     if (activeBeat.state === 'idle') applyIdleSway(timeMs);
 
-    const active = activeBeat.id === 'hero';
-    for (const c of cables) c.mesh.visible = active;
-    if (!active || cables.length === 0) return;
-
+    // Project + publish the cube centre every frame (cheap), for section builders.
     cube.object.updateWorldMatrix(true, false);
     camera.updateMatrixWorld(true);
     const m = cube.object.matrixWorld;
@@ -401,6 +404,14 @@ function bootLanding(stage: HTMLElement, canvas: HTMLCanvasElement): void {
     vProj.copy(vCentre).project(camera);
     const centreSX = (vProj.x * 0.5 + 0.5) * window.innerWidth;
     const centreSY = (-vProj.y * 0.5 + 0.5) * window.innerHeight;
+    cubeScreen.x = centreSX;
+    cubeScreen.y = centreSY;
+    cubeScreen.beat = activeBeat.id;
+    cubeScreen.ready = true;
+
+    const active = activeBeat.id === 'hero';
+    for (const c of cables) c.mesh.visible = active;
+    if (!active || cables.length === 0) return;
 
     const acc = engine.theme.preset.accent.color;
     const ar = ((acc >> 16) & 255) / 255;

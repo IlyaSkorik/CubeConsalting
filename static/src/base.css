@@ -432,7 +432,57 @@ html[data-cube="off"] #cube-stage { display: none; }
     border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
+/* ==========================================================================
+   CUB LAB — Section construction (Solutions): the cube reveals architecture
+   No expanding pulse / bloom. Energy exits the cube through a port; connections
+   grow (section-network.js) and each card is CONSTRUCTED as its connection lands
+   (a structured wipe — never a scale-pop). processor → bus → network → system.
+   ========================================================================== */
+.sol-net {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: visible;
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-standard);
+}
+.sol-net.is-active { opacity: 1; }
+.sol-link {
+    fill: none;
+    stroke: color-mix(in srgb, var(--accent) 55%, transparent);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-dasharray: 100;          /* pathLength normalised — JS drives the grow */
+    stroke-dashoffset: 100;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) 42%, transparent));
+}
+.sol-node {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--accent) 70%, transparent));
+}
+.sol-origin {
+    fill: var(--accent);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 80%, transparent));
+    animation: sol-origin-pulse 2.4s ease-in-out infinite;   /* the active port */
+}
+@keyframes sol-origin-pulse { 0%, 100% { opacity: 0.65; } 50% { opacity: 1; } }
+
+/* Cards are CONSTRUCTED (wiped in from the connection side), not scaled/blurred in. */
+.sol-card {
+    opacity: 0;
+    clip-path: inset(0 100% 0 0);
+    transition:
+        opacity 0.5s var(--ease-standard),
+        clip-path 0.75s var(--ease-standard);
+}
+.sol-card[data-build="rtl"] { clip-path: inset(0 0 0 100%); }
+.sol-card.is-built { opacity: 1; clip-path: inset(0 0 0 0); }
+
 @media (prefers-reduced-motion: reduce) {
+    .sol-net { display: none; }
+    .sol-card { transition: none; }
+
     .hero-node,
     .status-dot,
     .hero-msg__dot,
