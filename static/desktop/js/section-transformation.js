@@ -80,7 +80,7 @@
         shell.style.setProperty('--emerge', p.toFixed(3));
         shell.classList.toggle('is-manifest', p >= 1 || i < current);
         shell.classList.toggle('is-emerging', i === current && p > 0 && p < 1);
-        shell.classList.toggle('is-active', i === current && p >= 0.55);
+        shell.classList.toggle('is-active', p >= 1 || (i === current && p >= 0.55));
       }
     }
 

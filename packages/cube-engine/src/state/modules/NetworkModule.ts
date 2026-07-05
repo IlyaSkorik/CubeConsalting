@@ -17,6 +17,24 @@ export const TRANSFORMATION = {
 
 const CELL = 1.08;
 
+/** Total elapsed seconds before the platform rests into living idle. */
+export function transformationCompleteAt(): number {
+  const { introHold, morphDuration, holdAtPeak, formCount } = TRANSFORMATION;
+  return introHold + formCount * (morphDuration + holdAtPeak);
+}
+
+/** Living idle — same language as Hero, gentler amplitudes for the settled core. */
+const LIVING_YAW = (7 * Math.PI) / 180;
+const LIVING_PITCH = (1 * Math.PI) / 180;
+const LIVING_ROLL = (0.3 * Math.PI) / 180;
+const LIVING_FLOAT = 0.025;
+const LIVING_DAMP = 0.06;
+const FINAL_FORM = TRANSFORMATION.formCount - 1;
+
+const prefersReducedMotion = (): boolean =>
+  typeof matchMedia !== 'undefined' &&
+  matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 interface Personality {
   readonly ry: number;
   readonly rx: number;
@@ -45,12 +63,21 @@ export class NetworkModule implements CubeModule {
   private readonly to = new Vector3();
   private elapsed = 0;
   private enteredAt = -1;
+  private smoothedRx: number | null = null;
+  private smoothedRy: number | null = null;
+  private smoothedRz: number | null = null;
+  private smoothedPy: number | null = null;
 
   enter(ctx: ModuleContext): void {
     this.elapsed = 0;
     this.enteredAt = -1;
+    this.smoothedRx = null;
+    this.smoothedRy = null;
+    this.smoothedRz = null;
+    this.smoothedPy = null;
     ctx.cube.object.scale.setScalar(CUBE.scale);
     ctx.cube.object.rotation.set(0, 0, 0);
+    ctx.cube.object.position.y = 0;
     ctx.cube.setDampingLambda(5);
     ctx.energy.clear();
     ctx.cube.resetToHome();
@@ -60,11 +87,17 @@ export class NetworkModule implements CubeModule {
   exit(ctx: ModuleContext): void {
     ctx.cube.resetToHome();
     ctx.cube.object.rotation.set(0, 0, 0);
+    ctx.cube.object.position.y = 0;
   }
 
   update(_delta: number, elapsed: number, ctx: ModuleContext): void {
     if (this.enteredAt < 0) this.enteredAt = elapsed;
     this.elapsed = elapsed - this.enteredAt;
+
+    if (this.elapsed >= transformationCompleteAt()) {
+      this.applyLivingIdle(ctx);
+      return;
+    }
 
     const phase = this.phaseAt(this.elapsed);
     const fromForm = phase.fromForm;
@@ -167,5 +200,64 @@ export class NetworkModule implements CubeModule {
       default:
         return 0.9 + Math.sin(c.index * 0.7) * 0.03;
     }
+  }
+
+  /** Resting intelligence after all shells are present — calm, quasi-periodic sway. */
+  private applyLivingIdle(ctx: ModuleContext): void {
+    for (const c of ctx.cube.cubelets) {
+      c.targetPosition.copy(this.formPosition(c, FINAL_FORM));
+      c.targetScale.setScalar(this.formScale(c, FINAL_FORM));
+      c.targetQuaternion.identity();
+    }
+
+    const base = PERSONALITY[FINAL_FORM];
+    let tX: number;
+    let tY: number;
+    let tZ: number;
+    let tPy: number;
+
+    if (prefersReducedMotion()) {
+      tX = base.rx;
+      tY = base.ry;
+      tZ = base.rz;
+      tPy = 0;
+    } else {
+      const s = this.elapsed;
+      tY =
+        base.ry +
+        LIVING_YAW * (0.82 * Math.sin(s * 0.314) + 0.18 * Math.sin(s * 0.497 + 1.3));
+      tX =
+        base.rx +
+        LIVING_PITCH * (0.7 * Math.sin(s * 0.399 + 0.5) + 0.3 * Math.sin(s * 0.259));
+      tZ = base.rz + LIVING_ROLL * Math.sin(s * 0.217 + 2.1);
+      tPy = LIVING_FLOAT * (0.7 * Math.sin(s * 0.549) + 0.3 * Math.sin(s * 0.364 + 0.8));
+    }
+
+    let rx = this.smoothedRx;
+    let ry = this.smoothedRy;
+    let rz = this.smoothedRz;
+    let py = this.smoothedPy;
+    if (rx === null || ry === null || rz === null || py === null) {
+      rx = ctx.cube.object.rotation.x;
+      ry = ctx.cube.object.rotation.y;
+      rz = ctx.cube.object.rotation.z;
+      py = ctx.cube.object.position.y;
+    }
+
+    const k = LIVING_DAMP;
+    rx += (tX - rx) * k;
+    ry += (tY - ry) * k;
+    rz += (tZ - rz) * k;
+    py += (tPy - py) * k;
+    this.smoothedRx = rx;
+    this.smoothedRy = ry;
+    this.smoothedRz = rz;
+    this.smoothedPy = py;
+
+    ctx.cube.object.rotation.set(rx, ry, rz);
+    ctx.cube.object.position.y = py;
+
+    const breath = 1 + Math.sin(this.elapsed * 0.331) * 0.004;
+    ctx.cube.object.scale.setScalar(CUBE.scale * base.scale * breath);
   }
 }

@@ -559,35 +559,26 @@ html[data-cube="off"] #cube-stage { display: none; }
 }
 
 .sol-shell.is-emerging {
-    opacity: calc(var(--emerge, 0) * 0.9);
+    opacity: var(--emerge, 0);
     pointer-events: auto;
 }
 
-.sol-shell.is-active {
-    opacity: 1;
-    filter: blur(0);
-    pointer-events: auto;
-}
-
+.sol-shell.is-active,
 .sol-shell.is-manifest {
-    opacity: 0.4;
+    opacity: 1;
     filter: blur(0);
     pointer-events: auto;
 }
 
-.sol-section.is-complete .sol-shell.is-manifest {
-    opacity: 0.46;
-}
-
-.sol-shell.is-active.is-manifest {
-    opacity: 1;
-}
-
-.sol-shell.is-active .glass {
+.sol-shell.is-manifest .glass {
     box-shadow:
         0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent),
         inset 0 0 28px -14px color-mix(in srgb, var(--accent) 10%, transparent),
         0 18px 44px -26px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.sol-shell.is-manifest .glass::after {
+    opacity: 0.55;
 }
 
 @media (max-width: 1023px) {
