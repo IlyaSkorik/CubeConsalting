@@ -54,6 +54,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # WhiteNoise serves /static/ directly from gunicorn with correct MIME types,
+    # so the site works even when nginx has no /static/ location. Must sit right
+    # after SecurityMiddleware and before everything else.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -132,6 +136,18 @@ TEMPLATES[0]["DIRS"] = [BASE_DIR / "templates"]
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# WhiteNoise storage: compress served static assets (gzip/brotli). No manifest
+# hashing so nothing breaks if a referenced file is missing — cache-busting is
+# already handled by the ?v={{ APP_VERSION }} query string in the templates.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 if not DEBUG:
     CSRF_TRUSTED_ORIGINS = [
