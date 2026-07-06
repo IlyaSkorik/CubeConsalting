@@ -1,8 +1,9 @@
 import type { SceneRegistry } from './SceneRegistry';
 import type { SceneLifecycle, SceneListener, SceneMode, SceneSnapshot } from './types';
+import { easeInOutCubic } from './easing';
 
-/** Fraction of each scene unit spent stable before crossfade to the next. */
-const HOLD_RATIO = 0.72;
+/** Stable hold before crossfade — tuned for discrete scene advances (~850ms total). */
+const HOLD_RATIO = 0.5;
 
 export interface SceneDirectorOptions {
   readonly registry: SceneRegistry;
@@ -13,6 +14,7 @@ export interface SceneDirectorOptions {
 export class SceneDirector {
   private timeline = 0;
   private lastActiveId = '';
+  private lastTransitionActive = false;
   private enterCounts = new Map<string, number>();
   private listeners = new Map<string, Set<(detail: unknown) => void>>();
 
@@ -39,19 +41,14 @@ export class SceneDirector {
     return snap;
   }
 
-  goTo(index: number, immediate = false): SceneSnapshot {
-    const target = immediate
-      ? index
-      : this.options.reducedMotion
-        ? index
-        : index;
-    return this.setTimeline(target);
+  goTo(index: number): SceneSnapshot {
+    return this.setTimeline(index);
   }
 
-  goToId(id: string, immediate = false): SceneSnapshot | null {
+  goToId(id: string): SceneSnapshot | null {
     const index = this.options.registry.indexOf(id);
     if (index < 0) return null;
-    return this.goTo(index, immediate);
+    return this.goTo(index);
   }
 
   on<K extends keyof import('./types').SceneEventMap>(
@@ -84,7 +81,8 @@ export class SceneDirector {
       clampedIndex < maxIndex &&
       localProgress > HOLD_RATIO
     ) {
-      transitionProgress = (localProgress - HOLD_RATIO) / (1 - HOLD_RATIO);
+      const raw = (localProgress - HOLD_RATIO) / (1 - HOLD_RATIO);
+      transitionProgress = easeInOutCubic(Math.max(0, Math.min(1, raw)));
       lifecycle = 'leaving';
       fromSceneId = registry.idAt(clampedIndex) ?? null;
       toSceneId = registry.idAt(clampedIndex + 1) ?? null;
@@ -119,31 +117,38 @@ export class SceneDirector {
 
   private emitLifecycle(snap: SceneSnapshot): void {
     const { activeSceneId, transitionProgress, fromSceneId, toSceneId } = snap;
+    const inTransition =
+      transitionProgress > 0 && fromSceneId !== null && toSceneId !== null;
 
-    if (transitionProgress > 0 && fromSceneId && toSceneId) {
-      this.dispatch('leaving', {
+    if (inTransition && !this.lastTransitionActive) {
+      const leavePayload = {
         id: fromSceneId,
         index: this.options.registry.indexOf(fromSceneId),
-        progress: transitionProgress,
-      });
-      this.dispatch('entering', {
+        progress: 0,
+      };
+      const enterPayload = {
         id: toSceneId,
         index: this.options.registry.indexOf(toSceneId),
-        progress: transitionProgress,
-      });
+        progress: 0,
+      };
+      this.dispatch('leaving', leavePayload);
+      this.dispatch('entering', enterPayload);
       document.dispatchEvent(
-        new CustomEvent('cub:scene-leaving', {
-          detail: { id: fromSceneId, progress: transitionProgress },
-        }),
+        new CustomEvent('cub:scene-leaving', { detail: { id: fromSceneId, progress: 0 } }),
       );
       document.dispatchEvent(
-        new CustomEvent('cub:scene-entering', {
-          detail: { id: toSceneId, progress: transitionProgress },
-        }),
+        new CustomEvent('cub:scene-entering', { detail: { id: toSceneId, progress: 0 } }),
       );
     }
 
-    if (activeSceneId && activeSceneId !== this.lastActiveId) {
+    this.lastTransitionActive = inTransition;
+
+    // Settled scene — only when fully on an integer timeline (not mid-crossfade).
+    const settled =
+      !inTransition &&
+      Math.abs(snap.timeline - Math.round(snap.timeline)) < 0.001;
+
+    if (settled && activeSceneId && activeSceneId !== this.lastActiveId) {
       this.lastActiveId = activeSceneId;
       const enterCount = (this.enterCounts.get(activeSceneId) ?? 0) + 1;
       this.enterCounts.set(activeSceneId, enterCount);

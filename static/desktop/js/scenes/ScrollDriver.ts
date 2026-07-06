@@ -2,6 +2,10 @@ import type { SceneDirector } from './SceneDirector';
 import { timelineFromScrollY } from './SceneDirector';
 import type { SceneRegistry } from './SceneRegistry';
 import type { SceneMode } from './types';
+import { easeInOutCubic } from './easing';
+
+/** Duration of one discrete scene advance (wheel, nav, keyboard). */
+const SCENE_ADVANCE_MS = 850;
 
 export interface ScrollDriverOptions {
   readonly registry: SceneRegistry;
@@ -13,10 +17,16 @@ export interface ScrollDriverOptions {
 
 export class ScrollDriver {
   private programmatic = false;
+  private animating = false;
+  private animRaf = 0;
+  private snapTimer = 0;
   private viewportHeight = 0;
-  private wheelLocked = false;
 
   constructor(private readonly options: ScrollDriverOptions) {}
+
+  get isAnimating(): boolean {
+    return this.animating;
+  }
 
   mount(): void {
     this.syncTrackHeight();
@@ -27,20 +37,26 @@ export class ScrollDriver {
     window.addEventListener('resize', this.onResize, { passive: true });
     window.addEventListener('wheel', this.onWheel, { passive: false });
     window.addEventListener('keydown', this.onKeyDown);
-  }
-
-  /** Called from the landing RAF loop — no separate animation frame. */
-  tick(): void {
-    if (this.options.mode === 'cinema') {
-      this.options.director.setTimeline(this.readTimeline());
+    if ('onscrollend' in window) {
+      window.addEventListener('scrollend', this.onScrollEnd);
     }
   }
 
+  /** Called from the landing RAF loop — sync scroll drift only when idle. */
+  tick(): void {
+    if (this.options.mode !== 'cinema') return;
+    if (this.animating || this.programmatic) return;
+    this.options.director.setTimeline(this.readTimeline());
+  }
+
   unmount(): void {
+    cancelAnimationFrame(this.animRaf);
+    window.clearTimeout(this.snapTimer);
     window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('resize', this.onResize);
     window.removeEventListener('wheel', this.onWheel);
     window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('scrollend', this.onScrollEnd);
   }
 
   goToId(id: string, immediate = false): void {
@@ -50,28 +66,81 @@ export class ScrollDriver {
   }
 
   goToIndex(index: number, immediate = false): void {
-    this.programmatic = true;
+    const max = this.options.registry.count - 1;
+    const target = Math.max(0, Math.min(max, index));
+
     if (this.options.mode === 'passive') {
-      const el = this.options.registry.byIndex.get(index)?.element;
-      if (el) {
-        const top = el.offsetTop;
-        window.scrollTo({
-          top,
-          behavior: immediate || this.options.reducedMotion ? ('instant' as ScrollBehavior) : 'smooth',
-        });
-      }
-    } else {
-      const vh = window.innerHeight;
-      const targetY = index * vh;
-      window.scrollTo({
-        top: targetY,
-        behavior: immediate || this.options.reducedMotion ? ('instant' as ScrollBehavior) : 'smooth',
-      });
+      this.goToIndexPassive(target, immediate);
+      return;
     }
-    this.options.director.goTo(index, immediate || this.options.reducedMotion);
+
+    if (immediate || this.options.reducedMotion) {
+      this.cancelAnimation();
+      this.snapToTimeline(target);
+      return;
+    }
+
+    this.animateToIndex(target);
+  }
+
+  private goToIndexPassive(index: number, immediate: boolean): void {
+    const el = this.options.registry.byIndex.get(index)?.element;
+    if (!el) return;
+    this.programmatic = true;
+    window.scrollTo({
+      top: el.offsetTop,
+      behavior: immediate || this.options.reducedMotion ? ('instant' as ScrollBehavior) : 'smooth',
+    });
+    this.options.director.goTo(index);
     window.setTimeout(() => {
       this.programmatic = false;
     }, immediate ? 0 : 800);
+  }
+
+  private animateToIndex(targetIndex: number): void {
+    if (this.animating) return;
+
+    const from = this.options.director.snapshot.timeline;
+    const to = targetIndex;
+    if (Math.abs(to - from) < 0.001) return;
+
+    this.cancelAnimation();
+    this.animating = true;
+    this.programmatic = true;
+
+    const vh = this.viewportHeight || window.innerHeight;
+    const startMs = performance.now();
+
+    const frame = (now: number): void => {
+      const linear = Math.min(1, (now - startMs) / SCENE_ADVANCE_MS);
+      const eased = easeInOutCubic(linear);
+      const timeline = from + (to - from) * eased;
+
+      this.options.director.setTimeline(timeline);
+      window.scrollTo(0, timeline * vh);
+
+      if (linear < 1) {
+        this.animRaf = requestAnimationFrame(frame);
+      } else {
+        this.snapToTimeline(to);
+        this.animating = false;
+        this.programmatic = false;
+      }
+    };
+
+    this.animRaf = requestAnimationFrame(frame);
+  }
+
+  private snapToTimeline(index: number): void {
+    const vh = this.viewportHeight || window.innerHeight;
+    window.scrollTo(0, index * vh);
+    this.options.director.goTo(index);
+  }
+
+  private cancelAnimation(): void {
+    cancelAnimationFrame(this.animRaf);
+    this.animRaf = 0;
+    this.animating = false;
   }
 
   private readTimeline(): number {
@@ -97,20 +166,51 @@ export class ScrollDriver {
     }
   }
 
+  private scheduleSnapCheck(): void {
+    window.clearTimeout(this.snapTimer);
+    this.snapTimer = window.setTimeout(() => this.correctDrift(), 150);
+  }
+
+  /** Pull free scroll back to the nearest settled scene — no mid-crossfade rest. */
+  private correctDrift(): void {
+    if (this.animating || this.programmatic || this.options.mode !== 'cinema') return;
+
+    const t = this.readTimeline();
+    const max = this.options.registry.count - 1;
+    const nearest = Math.max(0, Math.min(max, Math.round(t)));
+
+    if (Math.abs(t - nearest) > 0.04) {
+      this.animateToIndex(nearest);
+    } else if (Math.abs(t - nearest) > 0.001) {
+      this.snapToTimeline(nearest);
+    }
+  }
+
   private onScroll = (): void => {
-    if (this.programmatic) return;
+    if (this.programmatic || this.animating) return;
     this.options.director.setTimeline(this.readTimeline());
+    if (this.options.mode === 'cinema') {
+      this.scheduleSnapCheck();
+    }
+  };
+
+  private onScrollEnd = (): void => {
+    this.correctDrift();
   };
 
   private onResize = (): void => {
     this.viewportHeight = window.innerHeight;
     this.syncTrackHeight();
-    this.options.director.setTimeline(this.readTimeline());
+    if (!this.animating) {
+      const idx = this.options.director.snapshot.sceneIndex;
+      this.snapToTimeline(idx);
+    }
   };
 
   private onWheel = (event: WheelEvent): void => {
     if (this.options.mode !== 'cinema' || this.options.reducedMotion) return;
-    if (this.wheelLocked) {
+
+    if (this.animating) {
       event.preventDefault();
       return;
     }
@@ -132,11 +232,7 @@ export class ScrollDriver {
     if (next === idx) return;
 
     event.preventDefault();
-    this.wheelLocked = true;
-    this.goToIndex(next);
-    window.setTimeout(() => {
-      this.wheelLocked = false;
-    }, 900);
+    this.animateToIndex(next);
   };
 
   private onKeyDown = (event: KeyboardEvent): void => {
@@ -144,6 +240,8 @@ export class ScrollDriver {
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 
     const snap = this.options.director.snapshot;
+    if (snap.transitionProgress > 0.02 || this.animating) return;
+
     const idx = snap.sceneIndex;
     const max = this.options.registry.count - 1;
     let next = -1;
